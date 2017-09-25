@@ -24,12 +24,12 @@ internal class NetworkScheduler(private val context: Context,
 
     private companion object {
 
-        private val TAG: String = "NetworkScheduler"
+        private const val TAG = "NetworkScheduler"
 
-        private val DEFAULT_THREAD_COUNT: Int = 5
-        private val DEFAULT_KEEP_ALIVE_TIME: Long = 15L
-        private val DEFAULT_KEEP_ALIVE_TIME_UNIT: TimeUnit = TimeUnit.SECONDS
-        private val POOL_NUMBER: AtomicInteger = AtomicInteger(1)
+        private const val DEFAULT_THREAD_COUNT = 5
+        private const val DEFAULT_KEEP_ALIVE_TIME = 15L
+        private val DEFAULT_KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS
+        private val POOL_NUMBER = AtomicInteger(1)
 
     }
 

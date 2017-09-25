@@ -7,6 +7,6 @@ import ru.ustimov.weather.content.data.City
 interface Repository {
 
     @CheckResult
-    fun getCities() : Flowable<City>
+    fun getFavorites(): Flowable<out List<City>>
 
 }

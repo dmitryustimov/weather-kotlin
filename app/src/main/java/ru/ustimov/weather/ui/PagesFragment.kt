@@ -36,8 +36,8 @@ class PagesFragment : MvpAppCompatFragment(), PagesView {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val pager = view?.findViewById(R.id.pager) as ViewPager
-        val tabs = view.findViewById(R.id.tabs) as TabLayout
+        val pager: ViewPager = view!!.findViewById(R.id.pager)
+        val tabs: TabLayout = view.findViewById(R.id.tabs)
         tabs.setupWithViewPager(pager)
 
         adapter = PagesViewPagerAdapter(context, childFragmentManager)

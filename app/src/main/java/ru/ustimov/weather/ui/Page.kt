@@ -7,7 +7,9 @@ interface Page {
     interface Search : Page
 
     interface Place : Page {
+
         fun getCity() : City
+
     }
 
 }

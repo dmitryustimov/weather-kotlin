@@ -15,24 +15,37 @@ class PagesPresenter(private val appState: AppState) :
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        Flowable.just(searchPage).startWith(getCitiesOrEmpty())
-                .observeOn(appState.schedulers.computation())
-                .toList()
+        getPlacePagesOrEmpty()
+                .switchMap(this::appendSearchPage)
                 .compose(bindUntilDestroy())
                 .observeOn(appState.schedulers.mainThread())
                 .subscribe({ viewState.showPages(it) }, {})
     }
 
-    private fun getCitiesOrEmpty(): Flowable<Page> {
-        return appState.repository.getCities()
+    private fun getPlacePagesOrEmpty(): Flowable<List<Page>> {
+        return appState.repository.getFavorites()
                 .observeOn(appState.schedulers.computation())
-                .map({ createPlacePage(it) })
+                .switchMap(this::createPlacePages)
                 .doOnError({ it.println(appState.logger) })
                 .onErrorResumeNext(Flowable.empty())
     }
 
+    private fun createPlacePages(cities: List<City>): Flowable<List<Page>> {
+        return Flowable.fromIterable(cities)
+                .map({ createPlacePage(it) })
+                .toList()
+                .toFlowable()
+    }
+
     private fun createPlacePage(city: City): Page = object : Page.Place {
         override fun getCity() = city
+    }
+
+    private fun appendSearchPage(favorites: List<Page>): Flowable<List<Page>> {
+        return Flowable.just(searchPage)
+                .startWith(Flowable.fromIterable(favorites))
+                .toList()
+                .toFlowable()
     }
 
 }

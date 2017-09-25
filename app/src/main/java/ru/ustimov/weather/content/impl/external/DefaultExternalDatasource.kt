@@ -8,4 +8,5 @@ import ru.ustimov.weather.util.Logger
 class DefaultExternalDatasource(private val context: Context,
                                 private val schedulers: Schedulers,
                                 private val logger: Logger) : ExternalDatasource {
+
 }

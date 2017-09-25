@@ -13,7 +13,6 @@ class DefaultRepository(private val localDatasource: LocalDatasource,
                         private val schedulers: Schedulers,
                         private val logger: Logger) : Repository {
 
-    override fun getCities(): Flowable<City> = Flowable.empty<City>()
-            .subscribeOn(schedulers.io())
+    override fun getFavorites(): Flowable<out List<City>> = localDatasource.getFavorites()
 
 }
