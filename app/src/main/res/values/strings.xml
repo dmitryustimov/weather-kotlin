@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">Weather</string>
+
+    <string name="fragment_search_title">Search</string>
+
+</resources>
