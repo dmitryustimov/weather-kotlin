@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="emptyTextStyle" format="reference"/>
+    <attr name="emptyActionStyle" format="reference"/>
+
+    <declare-styleable name="EmptyView">
+        <attr name="android:text"/>
+        <attr name="android:drawable"/>
+        <attr name="android:action"/>
+    </declare-styleable>
+
+</resources>

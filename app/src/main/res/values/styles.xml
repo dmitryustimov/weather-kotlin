@@ -4,6 +4,16 @@
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
+
+        <item name="emptyTextStyle">@style/Widget.TextView.Empty</item>
+        <item name="emptyActionStyle">@style/Widget.Button.Action.Borderless</item>
     </style>
+
+    <style name="Widget.TextView.Empty" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
+    </style>
+
+    <style name="Widget.Button.Action.Borderless" parent="Widget.AppCompat.Button.Borderless.Colored"/>
 
 </resources>

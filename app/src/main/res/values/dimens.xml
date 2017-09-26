@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="empty_view_margin_horizontal">32dp</dimen>
+    <dimen name="empty_view_margin_vertical">32dp</dimen>
+    <dimen name="empty_view_action_margin_top">12dp</dimen>
+</resources>

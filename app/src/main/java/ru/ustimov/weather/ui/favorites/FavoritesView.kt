@@ -9,6 +9,15 @@ import ru.ustimov.weather.content.data.City
 interface FavoritesView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
+    fun showLoading()
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun showCities(@Size(min = 0) cities: List<City>)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun showEmpty();
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun hideLoading()
 
 }
