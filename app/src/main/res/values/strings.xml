@@ -2,6 +2,11 @@
 
     <string name="app_name">Weather</string>
 
+    <string name="action_favorites">Favorites</string>
+    <string name="action_my_location">My location</string>
+    <string name="action_search">Search</string>
+    <string name="action_settings">Settings</string>
+
     <string name="fragment_search_title">Search</string>
 
 </resources>
