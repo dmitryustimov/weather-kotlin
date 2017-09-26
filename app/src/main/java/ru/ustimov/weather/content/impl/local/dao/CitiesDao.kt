@@ -12,6 +12,6 @@ internal interface CitiesDao {
     fun getAll(): Flowable<List<RoomCity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(city: RoomCity)
+    fun insert(city: RoomCity): Long
 
 }

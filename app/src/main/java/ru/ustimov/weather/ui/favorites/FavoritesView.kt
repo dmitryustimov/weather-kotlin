@@ -1,13 +1,14 @@
-package ru.ustimov.weather.ui.pages
+package ru.ustimov.weather.ui.favorites
 
 import android.support.annotation.Size
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import ru.ustimov.weather.content.data.City
 
-interface PagesView : MvpView {
+interface FavoritesView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showPages(@Size(min = 0) pages: List<Page>)
+    fun showCities(@Size(min = 0) cities: List<City>)
 
 }

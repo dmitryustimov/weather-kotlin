@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class NetworkScheduler(private val context: Context,
-                       private val logger: Logger,
-                       autoStart: Boolean = true) : Scheduler() {
+                                private val logger: Logger,
+                                autoStart: Boolean = true) : Scheduler() {
 
     private companion object {
 

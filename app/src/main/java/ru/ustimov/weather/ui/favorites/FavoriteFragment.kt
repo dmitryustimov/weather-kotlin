@@ -1,4 +1,4 @@
-package ru.ustimov.weather.ui.pages.city
+package ru.ustimov.weather.ui.favorites
 
 import android.os.Bundle
 import com.arellomobile.mvp.MvpAppCompatFragment
