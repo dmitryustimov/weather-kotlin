@@ -1,4 +1,4 @@
-package ru.ustimov.weather.ui
+package ru.ustimov.weather.ui.pages
 
 import ru.ustimov.weather.content.data.City
 
@@ -6,7 +6,7 @@ interface Page {
 
     interface Search : Page
 
-    interface Place : Page {
+    interface Favorite : Page {
 
         fun getCity() : City
 

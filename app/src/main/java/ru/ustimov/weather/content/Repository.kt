@@ -1,12 +1,13 @@
 package ru.ustimov.weather.content
 
-import android.support.annotation.CheckResult
 import io.reactivex.Flowable
+import io.reactivex.Single
 import ru.ustimov.weather.content.data.City
 
 interface Repository {
 
-    @CheckResult
     fun getFavorites(): Flowable<out List<City>>
+
+    fun addFavorite(city: City): Single<out City>
 
 }

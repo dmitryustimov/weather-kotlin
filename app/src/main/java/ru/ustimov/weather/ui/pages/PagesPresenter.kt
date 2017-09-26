@@ -1,9 +1,10 @@
-package ru.ustimov.weather.ui
+package ru.ustimov.weather.ui.pages
 
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Flowable
 import ru.ustimov.weather.AppState
 import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.ui.RxMvpPresenter
 import ru.ustimov.weather.util.println
 
 @InjectViewState
@@ -37,7 +38,7 @@ class PagesPresenter(private val appState: AppState) :
                 .toFlowable()
     }
 
-    private fun createPlacePage(city: City): Page = object : Page.Place {
+    private fun createPlacePage(city: City): Page = object : Page.Favorite {
         override fun getCity() = city
     }
 

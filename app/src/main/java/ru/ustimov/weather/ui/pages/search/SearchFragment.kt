@@ -1,4 +1,4 @@
-package ru.ustimov.weather.ui
+package ru.ustimov.weather.ui.pages.search
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
