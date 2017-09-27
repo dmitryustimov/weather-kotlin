@@ -19,7 +19,7 @@ class EmptyView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int
 
     constructor(context: Context) : this(context, null, 0)
 
-    constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     init {
         orientation = VERTICAL

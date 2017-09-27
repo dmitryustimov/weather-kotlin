@@ -9,7 +9,9 @@ import io.reactivex.Single
 import ru.ustimov.weather.content.LocalDatasource
 import ru.ustimov.weather.content.Schedulers
 import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.content.data.Suggestion
 import ru.ustimov.weather.content.impl.local.data.RoomCity
+import ru.ustimov.weather.content.impl.local.data.RoomSearchHistory
 import ru.ustimov.weather.util.Logger
 
 class DefaultLocalDatasource(context: Context,
@@ -51,5 +53,18 @@ class DefaultLocalDatasource(context: Context,
             .doOnSuccess({ logger.d(TAG, "$it has been saved to database") })
             .doOnError({ logger.d(TAG, "$it has not been saved to database") })
             .subscribeOn(schedulers.io())
+
+    override fun getSearchHistory(query: String): Flowable<out List<Suggestion>> =
+            database.searchHistory().getLatest(query)
+                    .doOnNext({ logger.d(TAG, "Loaded ${it.size} search history entities") })
+                    .defaultIfEmpty(emptyList())
+                    .subscribeOn(schedulers.io())
+
+    override fun addSearchHistory(query: String): Single<out Suggestion> =
+            Single.just(RoomSearchHistory(id = null, queryText = query, createdAt = System.currentTimeMillis()))
+                    .doOnSuccess({ database.searchHistory().insert(it) })
+                    .doOnSuccess({ logger.d(TAG, "$it has been saved to database") })
+                    .doOnError({ logger.d(TAG, "$it has not been saved to database") })
+                    .subscribeOn(schedulers.io())
 
 }

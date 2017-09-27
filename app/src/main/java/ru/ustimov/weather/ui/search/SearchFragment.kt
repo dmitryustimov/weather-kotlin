@@ -15,9 +15,10 @@ import com.globusltd.recyclerview.datasource.ListDatasource
 import com.globusltd.recyclerview.view.ItemClickHelper
 import ru.ustimov.weather.R
 import ru.ustimov.weather.appState
+import ru.ustimov.weather.rx.RxLifecycleFragment
 import ru.ustimov.weather.rx.RxSearchView
 
-class SearchFragment : Fragment(), SearchView {
+class SearchFragment : RxLifecycleFragment(), SearchView {
 
     companion object Factory {
 
@@ -41,20 +42,17 @@ class SearchFragment : Fragment(), SearchView {
                               savedInstanceState: Bundle?): View =
             inflater!!.inflate(R.layout.fragment_search, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         suggestionsAdapter = SuggestionsAdapter()
 
-        searchView = view.findViewById(R.id.search_view)
+        searchView = view!!.findViewById(R.id.search_view)
         searchView.shouldShowProgress = false
         searchView.adapter = suggestionsAdapter
         val animator = DefaultItemAnimator()
         animator.supportsChangeAnimations = false
         searchView.setSearchItemAnimator(animator)
-
-        RxSearchView.onQueryText(searchView)
-                .doOnNext({ it.submit })
 
         /*searchView.setOnQueryTextListener(object : com.lapism.searchview.SearchView.OnQueryTextListener {
 
@@ -91,6 +89,21 @@ class SearchFragment : Fragment(), SearchView {
             true
         })
         itemClickHelper.setRecyclerView(recyclerView)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        RxSearchView.onQueryText(searchView)
+                .doOnNext({
+                    if (it.submit) {
+                        presenter.onQueryTextSubmit(it.query)
+                    } else {
+                        presenter.onQueryTextChanged(it.query)
+                    }
+                })
+                .compose(bindUntil(Event.PAUSE))
+                .subscribeOn(context.appState().schedulers.mainThread())
+                .subscribe()
     }
 
 }

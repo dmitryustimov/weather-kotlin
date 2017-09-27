@@ -37,6 +37,6 @@ object RxSearchView {
                 })
             }, BackpressureStrategy.LATEST)
 
-    data class QueryEvent(val query: CharSequence, val submit: Boolean)
+    data class QueryEvent(val query: String, val submit: Boolean)
 
 }

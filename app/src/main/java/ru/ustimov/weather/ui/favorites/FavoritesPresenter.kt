@@ -13,8 +13,8 @@ class FavoritesPresenter(private val appState: AppState) : RxMvpPresenter<Favori
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        viewState.showLoading()
         getFavoritesOrEmpty()
+                .doOnSubscribe({ viewState.showLoading() })
                 .compose(bindUntilDestroy())
                 .observeOn(appState.schedulers.mainThread())
                 .subscribe(this::onFavoritesLoaded, {})
