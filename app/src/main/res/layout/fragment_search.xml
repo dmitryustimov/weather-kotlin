@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-</LinearLayout>
+    <com.lapism.searchview.SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.lapism.searchview.SearchBehavior"
+        app:search_animation_duration="400"
+        app:search_hint="@string/search_hint"
+        app:search_navigation_icon="@drawable/ic_action_search"
+        app:search_shadow="false"
+        app:search_show_progress="true"
+        app:search_theme="light"
+        app:search_version="toolbar"
+        app:search_version_margins="toolbar_small"
+        app:search_voice="false"/>
+
+</android.support.design.widget.CoordinatorLayout>

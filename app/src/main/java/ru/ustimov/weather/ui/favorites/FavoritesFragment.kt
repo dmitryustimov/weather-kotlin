@@ -1,5 +1,6 @@
 package ru.ustimov.weather.ui.favorites
 
+import android.content.Context
 import android.os.Bundle
 import android.support.annotation.Size
 import android.support.design.widget.TabLayout
@@ -8,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -25,11 +25,20 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView {
 
     }
 
+    interface Callbacks {
+
+        fun onFindCityClick()
+
+    }
+
     @InjectPresenter
     lateinit var presenter: FavoritesPresenter
 
+    private var callbacks: Callbacks? = null
+
     private lateinit var progressBar: ProgressBar
     private lateinit var pagerView: ViewPager
+    private lateinit var tabLayout: TabLayout
     private lateinit var emptyView: EmptyView
     private lateinit var adapter: FavoritesViewPagerAdapter
 
@@ -39,29 +48,33 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView {
         return FavoritesPresenter(appState)
     }
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        callbacks = context as Callbacks
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
+                              savedInstanceState: Bundle?): View =
             inflater!!.inflate(R.layout.fragment_favorites, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        progressBar = view!!.findViewById<ProgressBar>(R.id.progress)
+        progressBar = view.findViewById<ProgressBar>(R.id.progress)
 
         pagerView = view.findViewById<ViewPager>(R.id.pager)
-        val tabs = view.findViewById<TabLayout>(R.id.tabs)
-        tabs.setupWithViewPager(pagerView)
+        tabLayout = view.findViewById<TabLayout>(R.id.tabs)
+        tabLayout.setupWithViewPager(pagerView)
 
         adapter = FavoritesViewPagerAdapter(childFragmentManager)
         pagerView.adapter = adapter
 
         emptyView = view.findViewById<EmptyView>(R.id.empty)
-        emptyView.onActionButtonClickListener = {
-            Toast.makeText(context, "Action button clicked", Toast.LENGTH_SHORT).show()
-        }
+        emptyView.onActionButtonClickListener = { callbacks?.onFindCityClick() }
     }
 
     override fun showLoading() {
+        tabLayout.visibility = View.GONE
         pagerView.visibility = View.GONE
         emptyView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
@@ -72,6 +85,7 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView {
     }
 
     override fun showEmpty() {
+        tabLayout.visibility = View.GONE
         pagerView.visibility = View.GONE
         progressBar.visibility = View.GONE
         emptyView.visibility = View.VISIBLE
@@ -80,7 +94,13 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView {
     override fun hideLoading() {
         emptyView.visibility = View.GONE
         progressBar.visibility = View.GONE
+        tabLayout.visibility = View.VISIBLE
         pagerView.visibility = View.VISIBLE
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
     }
 
 }

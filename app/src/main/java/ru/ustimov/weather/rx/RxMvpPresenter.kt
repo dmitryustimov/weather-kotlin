@@ -1,4 +1,4 @@
-package ru.ustimov.weather.ui
+package ru.ustimov.weather.rx
 
 import android.support.annotation.CallSuper
 import com.arellomobile.mvp.MvpPresenter

@@ -1,6 +1,7 @@
 package ru.ustimov.weather.ui
 
 import android.content.Context
+import android.support.v7.widget.AppCompatDrawableManager
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.Button
@@ -35,9 +36,15 @@ class EmptyView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.EmptyView, defStyleAttr, 0)
         try {
             val text = a.getText(R.styleable.EmptyView_android_text)
-            val drawableRes = a.getResourceId(R.styleable.EmptyView_android_drawable, 0)
             textView.text = text
-            textView.setCompoundDrawablesWithIntrinsicBounds(0, drawableRes, 0, 0)
+
+            var drawableRes = 0
+            if (a.hasValue(R.styleable.EmptyView_android_drawable)) {
+                drawableRes = a.getResourceId(R.styleable.EmptyView_android_drawable, 0)
+                val drawable = AppCompatDrawableManager.get().getDrawable(context, drawableRes)
+                textView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
+            }
+
             textView.visibility = if (text.isNullOrEmpty() && drawableRes == 0) GONE else VISIBLE
 
             val action = a.getText(R.styleable.EmptyView_android_action)

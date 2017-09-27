@@ -4,7 +4,7 @@ import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Flowable
 import ru.ustimov.weather.AppState
 import ru.ustimov.weather.content.data.City
-import ru.ustimov.weather.ui.RxMvpPresenter
+import ru.ustimov.weather.rx.RxMvpPresenter
 import ru.ustimov.weather.util.println
 
 @InjectViewState

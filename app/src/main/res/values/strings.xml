@@ -10,6 +10,6 @@
     <string name="favorites_empty_text">You have no favorites yet</string>
     <string name="favorites_empty_action">Find city</string>
 
-    <string name="fragment_search_title">Search</string>
+    <string name="search_hint">Search…</string>
 
 </resources>
