@@ -54,11 +54,11 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
                 .compose(bindUntilDestroy())
                 .subscribe({}, { it.println(appState.logger) })
 
-        return Observable.timer(2L, TimeUnit.SECONDS)
-                .flatMap({ Observable.empty<List<City>>() })
+        return appState.repository.findCities(query)
                 .doOnSubscribe({ onSearchStarted() })
                 .observeOn(appState.schedulers.mainThread())
                 .doOnComplete({ onSearchCompleted() })
+                .toObservable()
     }
 
     private fun onSearchStarted() {
@@ -70,6 +70,6 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
         viewState.hideLoading()
     }
 
-    private data class Query(val text: String, val submit: Boolean)
+    data class Query(val text: String, val submit: Boolean)
 
 }

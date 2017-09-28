@@ -60,14 +60,14 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     }
 
     private fun onSuggestionClick(item: Suggestion): Boolean {
-        searchView.setQuery(item.getText(), true)
+        searchView.setQuery(item.text(), true)
         searchView.hideKeyboard()
         return true
     }
 
     override fun onResume() {
         super.onResume()
-        RxSearchView.onQueryText(searchView)
+        RxSearchView.onQueryTextChanged(searchView)
                 .doOnNext({ if (it.submit) searchView.hideKeyboard() })
                 .doOnNext({ presenter.onQueryChanged(it.query, it.submit) })
                 .compose(bindUntil(Event.PAUSE))

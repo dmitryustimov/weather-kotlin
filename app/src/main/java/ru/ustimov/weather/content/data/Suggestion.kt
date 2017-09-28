@@ -2,7 +2,7 @@ package ru.ustimov.weather.content.data
 
 interface Suggestion {
 
-    fun getText(): CharSequence
+    fun text(): CharSequence
 
     fun fromHistory(): Boolean
 

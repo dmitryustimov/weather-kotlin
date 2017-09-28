@@ -3,4 +3,6 @@
     <dimen name="empty_view_margin_horizontal">32dp</dimen>
     <dimen name="empty_view_margin_vertical">32dp</dimen>
     <dimen name="empty_view_action_margin_top">12dp</dimen>
+
+    <dimen name="search_fragment_app_bar_min_height">64dp</dimen>
 </resources>

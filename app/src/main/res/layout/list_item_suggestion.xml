@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:clickable="true"
+    android:gravity="start|center_vertical"
+    android:minHeight="?listPreferredItemHeightSmall"
+    android:orientation="horizontal"
+    android:paddingEnd="?listPreferredItemPaddingRight"
+    android:paddingLeft="?listPreferredItemPaddingLeft"
+    android:paddingRight="?listPreferredItemPaddingRight"
+    android:paddingStart="?listPreferredItemPaddingLeft">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:scaleType="center"
+        android:tint="?android:textColorSecondary"
+        tools:src="@drawable/ic_history"/>
+
+    <TextView
+        android:id="@+id/text"
+        style="?android:textAppearanceInverse"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="?listPreferredItemPaddingLeft"
+        android:layout_marginStart="?listPreferredItemPaddingLeft"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:lines="1"
+        android:maxLines="1"
+        android:textIsSelectable="false"
+        tools:text="Moskow"/>
+
+</LinearLayout>

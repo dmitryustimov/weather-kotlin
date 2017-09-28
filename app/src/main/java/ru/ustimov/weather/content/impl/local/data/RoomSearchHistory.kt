@@ -22,7 +22,7 @@ internal data class RoomSearchHistory(
 
     fun createdAt(): Long = createdAt
 
-    override fun getText(): CharSequence = queryText
+    override fun text(): CharSequence = queryText
 
     override fun fromHistory(): Boolean = true
 

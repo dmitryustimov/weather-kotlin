@@ -7,7 +7,7 @@ import io.reactivex.android.MainThreadDisposable
 
 object RxSearchView {
 
-    fun onQueryText(searchView: SearchView): Flowable<QueryEvent> =
+    fun onQueryTextChanged(searchView: SearchView): Flowable<QueryEvent> =
             Flowable.create({ emitter ->
                 MainThreadDisposable.verifyMainThread()
 

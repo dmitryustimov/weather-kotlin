@@ -42,4 +42,7 @@ class DefaultRepository(private val localDatasource: LocalDatasource,
     override fun addSearchHistory(query: String): Single<out Suggestion> =
             localDatasource.addSearchHistory(query)
 
+    override fun findCities(query: String): Flowable<out List<City>> =
+            externalDatasource.findCities(query)
+
 }

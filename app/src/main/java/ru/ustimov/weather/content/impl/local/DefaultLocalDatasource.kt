@@ -61,7 +61,7 @@ class DefaultLocalDatasource(context: Context,
                     .subscribeOn(schedulers.io())
 
     override fun addSearchHistory(query: String): Single<out Suggestion> =
-            Single.just(RoomSearchHistory(id = null, queryText = query, createdAt = System.currentTimeMillis()))
+            Single.just(RoomSearchHistory(queryText = query, createdAt = System.currentTimeMillis()))
                     .doOnSuccess({ database.searchHistory().insert(it) })
                     .doOnSuccess({ logger.d(TAG, "$it has been saved to database") })
                     .doOnError({ logger.d(TAG, "$it has not been saved to database") })
