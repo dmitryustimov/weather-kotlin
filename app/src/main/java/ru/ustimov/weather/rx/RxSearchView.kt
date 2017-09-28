@@ -5,37 +5,41 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.android.MainThreadDisposable
 
-object RxSearchView {
+class RxSearchView private constructor() {
 
-    fun onQueryTextChanged(searchView: SearchView): Flowable<QueryEvent> =
-            Flowable.create({ emitter ->
-                MainThreadDisposable.verifyMainThread()
+    companion object {
 
-                val listener = object : SearchView.OnQueryTextListener {
+        fun onQueryTextChanged(searchView: SearchView): Flowable<QueryEvent> =
+                Flowable.create({ emitter ->
+                    MainThreadDisposable.verifyMainThread()
 
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        if (!emitter.isCancelled) {
-                            emitter.onNext(QueryEvent(newText.orEmpty(), false))
+                    val listener = object : SearchView.OnQueryTextListener {
+
+                        override fun onQueryTextChange(newText: String?): Boolean {
+                            if (!emitter.isCancelled) {
+                                emitter.onNext(QueryEvent(newText.orEmpty(), false))
+                            }
+                            return true
                         }
-                        return true
-                    }
 
-                    override fun onQueryTextSubmit(query: String?): Boolean {
-                        if (!emitter.isCancelled) {
-                            emitter.onNext(QueryEvent(query.orEmpty(), true))
+                        override fun onQueryTextSubmit(query: String?): Boolean {
+                            if (!emitter.isCancelled) {
+                                emitter.onNext(QueryEvent(query.orEmpty(), true))
+                            }
+                            return true
                         }
-                        return true
-                    }
 
-                }
-                searchView.setOnQueryTextListener(listener)
-
-                emitter.setDisposable(object : MainThreadDisposable() {
-                    override fun onDispose() {
-                        searchView.setOnQueryTextListener(null)
                     }
-                })
-            }, BackpressureStrategy.LATEST)
+                    searchView.setOnQueryTextListener(listener)
+
+                    emitter.setDisposable(object : MainThreadDisposable() {
+                        override fun onDispose() {
+                            searchView.setOnQueryTextListener(null)
+                        }
+                    })
+                }, BackpressureStrategy.LATEST)
+
+    }
 
     data class QueryEvent(val query: String, val submit: Boolean)
 

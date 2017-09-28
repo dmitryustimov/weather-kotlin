@@ -52,7 +52,7 @@ interface Forecast {
     interface Clouds {
 
         @FloatRange(from = 0.0, to = 100.0)
-        fun cloudness(): Double
+        fun all(): Double
 
     }
 

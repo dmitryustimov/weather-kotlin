@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">Weather</string>
+    <string name="org_openweathermap_base_url" translatable="false">http://api.openweathermap.org/data/2.5/</string>
 
     <string name="action_favorites">Favorites</string>
     <string name="action_my_location">My location</string>
