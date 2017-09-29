@@ -12,7 +12,7 @@ interface FavoritesView : MvpView {
     fun showLoading()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showCities(@Size(min = 0) cities: List<City>)
+    fun showCities(@Size(min = 1) cities: List<City>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun showEmpty();

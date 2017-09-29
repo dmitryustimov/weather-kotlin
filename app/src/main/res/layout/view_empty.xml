@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/textView"
         style="?attr/emptyTextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
         tools:text="@string/favorites_empty_text"/>
 
     <Button
-        android:id="@+id/action"
+        android:id="@+id/actionButton"
         style="?attr/emptyActionStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

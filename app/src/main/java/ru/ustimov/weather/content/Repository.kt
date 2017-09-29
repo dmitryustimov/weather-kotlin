@@ -3,6 +3,7 @@ package ru.ustimov.weather.content
 import io.reactivex.Flowable
 import io.reactivex.Single
 import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.content.data.CurrentWeather
 import ru.ustimov.weather.content.data.Suggestion
 
 interface Repository {
@@ -15,6 +16,6 @@ interface Repository {
 
     fun addSearchHistory(query: String): Single<out Suggestion>
 
-    fun findCities(query: String): Flowable<out List<City>>
+    fun findCities(query: String): Flowable<out List<CurrentWeather>>
 
 }

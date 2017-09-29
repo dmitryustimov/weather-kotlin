@@ -1,28 +1,27 @@
 package ru.ustimov.weather.ui
 
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import kotlinx.android.extensions.CacheImplementation
+import kotlinx.android.extensions.ContainerOptions
+import kotlinx.android.synthetic.main.activity_main.*
 import ru.ustimov.weather.R
 import ru.ustimov.weather.ui.favorites.FavoritesFragment
 import ru.ustimov.weather.ui.search.SearchFragment
 
+@ContainerOptions(CacheImplementation.SPARSE_ARRAY)
 class MainActivity : AppCompatActivity(), FavoritesFragment.Callbacks {
-
-    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_bar);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this::onBottomNavigationItemSelected)
-        bottomNavigationView.setOnNavigationItemReselectedListener({})
-
+        bottomNavigationBar.setOnNavigationItemSelectedListener(this::onBottomNavigationItemSelected)
+        bottomNavigationBar.setOnNavigationItemReselectedListener({})
         if (savedInstanceState == null) {
-            bottomNavigationView.selectedItemId = R.id.action_my_location
+            bottomNavigationBar.selectedItemId = R.id.action_my_location
         }
     }
 
@@ -63,7 +62,7 @@ class MainActivity : AppCompatActivity(), FavoritesFragment.Callbacks {
             .commit()
 
     override fun onFindCityClick() {
-        bottomNavigationView.selectedItemId = R.id.action_search
+        bottomNavigationBar.selectedItemId = R.id.action_search
     }
 
 }

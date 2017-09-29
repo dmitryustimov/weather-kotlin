@@ -4,22 +4,18 @@ import android.content.Context
 import android.support.v7.widget.AppCompatDrawableManager
 import android.util.AttributeSet
 import android.view.Gravity
-import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.TextView
+import kotlinx.android.extensions.CacheImplementation
+import kotlinx.android.extensions.ContainerOptions
+import kotlinx.android.synthetic.main.view_empty.view.*
 import ru.ustimov.weather.R
 
-class EmptyView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-        LinearLayout(context, attrs, defStyleAttr) {
-
-    private val textView: TextView
-    private val actionButton: Button
+@ContainerOptions(CacheImplementation.SPARSE_ARRAY)
+class EmptyView @JvmOverloads constructor(
+        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     var onActionButtonClickListener: () -> Unit = {}
-
-    constructor(context: Context) : this(context, null, 0)
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     init {
         orientation = VERTICAL
@@ -30,8 +26,6 @@ class EmptyView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int
         setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical)
 
         inflate(context, R.layout.view_empty, this)
-        textView = findViewById(R.id.text)
-        actionButton = findViewById(R.id.action)
 
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.EmptyView, defStyleAttr, 0)
         try {

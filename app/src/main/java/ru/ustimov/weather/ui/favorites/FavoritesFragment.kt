@@ -3,20 +3,20 @@ package ru.ustimov.weather.ui.favorites
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.Size
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import kotlinx.android.extensions.CacheImplementation
+import kotlinx.android.extensions.ContainerOptions
+import kotlinx.android.synthetic.main.fragment_favorites.*
 import ru.ustimov.weather.R
 import ru.ustimov.weather.appState
 import ru.ustimov.weather.content.data.City
-import ru.ustimov.weather.ui.EmptyView
 
+@ContainerOptions(CacheImplementation.SPARSE_ARRAY)
 class FavoritesFragment : MvpAppCompatFragment(), FavoritesView {
 
     companion object Factory {
@@ -36,10 +36,6 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView {
 
     private var callbacks: Callbacks? = null
 
-    private lateinit var progressBar: ProgressBar
-    private lateinit var pagerView: ViewPager
-    private lateinit var tabLayout: TabLayout
-    private lateinit var emptyView: EmptyView
     private lateinit var adapter: FavoritesViewPagerAdapter
 
     @ProvidePresenter
@@ -60,16 +56,11 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        progressBar = view.findViewById<ProgressBar>(R.id.progress)
-
-        pagerView = view.findViewById<ViewPager>(R.id.pager)
-        tabLayout = view.findViewById<TabLayout>(R.id.tabs)
         tabLayout.setupWithViewPager(pagerView)
 
         adapter = FavoritesViewPagerAdapter(childFragmentManager)
         pagerView.adapter = adapter
 
-        emptyView = view.findViewById<EmptyView>(R.id.empty)
         emptyView.onActionButtonClickListener = { callbacks?.onFindCityClick() }
     }
 
@@ -80,7 +71,7 @@ class FavoritesFragment : MvpAppCompatFragment(), FavoritesView {
         progressBar.visibility = View.VISIBLE
     }
 
-    override fun showCities(@Size(min = 0) cities: List<City>) {
+    override fun showCities(@Size(min = 1) cities: List<City>) {
         adapter.items = cities
     }
 

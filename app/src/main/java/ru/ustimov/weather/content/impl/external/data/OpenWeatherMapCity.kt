@@ -8,7 +8,6 @@ internal data class OpenWeatherMapCity(
         @SerializedName("id") private val id: Long,
         @SerializedName("name") private val name: String?,
         @SerializedName("country") private val country: String?,
-        @SerializedName("sys") private val sys: Sys?,
         @SerializedName("coord") private val location: OpenWeatherMapLocation
 ) : City {
 
@@ -16,11 +15,8 @@ internal data class OpenWeatherMapCity(
 
     override fun name(): String? = name
 
-    override fun country(): String? = (if (country.isNullOrEmpty()) sys?.country else country)
-            .orEmpty().toLowerCase()
+    override fun country(): String? = country.orEmpty().toLowerCase()
 
     override fun location(): Location = location
-
-    internal data class Sys(@SerializedName("country") val country: String?)
 
 }

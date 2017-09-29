@@ -14,9 +14,11 @@ import ru.ustimov.weather.content.impl.local.data.RoomCity
 import ru.ustimov.weather.content.impl.local.data.RoomSearchHistory
 import ru.ustimov.weather.util.Logger
 
-class DefaultLocalDatasource(context: Context,
-                             private val schedulers: Schedulers,
-                             private val logger: Logger) : LocalDatasource {
+class DefaultLocalDatasource(
+        context: Context,
+        private val schedulers: Schedulers,
+        private val logger: Logger
+) : LocalDatasource {
 
     private companion object {
         private val TAG = "DefaultLocalDatasource"
