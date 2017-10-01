@@ -8,8 +8,8 @@ internal data class OpenWeatherMapLocation(
         @SerializedName("lon") private val longitude: Double
 ) : Location {
 
-    override fun latitude(): Double = latitude
+    override fun latitude() = latitude
 
-    override fun longitude(): Double = longitude
+    override fun longitude() = longitude
 
 }

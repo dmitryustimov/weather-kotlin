@@ -1,6 +1,6 @@
 package ru.ustimov.weather.content.impl.external.data
 
-import android.arch.persistence.room.Ignore
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import ru.ustimov.weather.content.data.City
 import ru.ustimov.weather.content.data.CurrentWeather
@@ -18,14 +18,25 @@ internal class OpenWeatherMapCurrentWeather(
         @SerializedName("weather") private val conditions: List<OpenWeatherMapWeather.Condition>
 ) : CurrentWeather {
 
-    @Ignore
-    private val lazyCity: Lazy<City> = lazy { OpenWeatherMapCity(id, name, sys.country, location) }
+    @Expose
+    private var lazyCity: City? = null
 
-    @Ignore
-    private val lazyWeather: Lazy<Weather> = lazy { OpenWeatherMapWeather(dateTime, main, wind, clouds, conditions) }
 
-    override fun city(): City = lazyCity.value
+    @Expose
+    private var lazyWeather: Weather? = null
 
-    override fun weather(): Weather = lazyWeather.value
+    override fun city(): City {
+        if (lazyCity == null) {
+            lazyCity = OpenWeatherMapCity(id, name, sys.country.orEmpty(), location)
+        }
+        return lazyCity!!
+    }
+
+    override fun weather(): Weather {
+        if (lazyWeather == null) {
+            lazyWeather = OpenWeatherMapWeather(dateTime, main, wind, clouds, conditions)
+        }
+        return lazyWeather!!
+    }
 
 }

@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.globusltd.recyclerview.Adapter
-import com.globusltd.recyclerview.datasource.Datasources
+import com.globusltd.recyclerview.datasource.Datasource
 import com.globusltd.recyclerview.view.ClickableViews
 import com.globusltd.recyclerview.view.ItemClickHelper
 import kotlinx.android.extensions.CacheImplementation
@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.list_item_suggestion.*
 import ru.ustimov.weather.R
 import ru.ustimov.weather.content.data.Suggestion
 
-class SuggestionsAdapter : Adapter<Suggestion, SuggestionsAdapter.ViewHolder>(Datasources.empty()),
+class SuggestionsAdapter(datasource: Datasource<Suggestion>) : Adapter<Suggestion, SuggestionsAdapter.ViewHolder>(datasource),
         ItemClickHelper.Callback<Suggestion> {
 
     override fun get(position: Int): Suggestion = datasource[position]

@@ -3,4 +3,6 @@
     <color name="color_primary">#ff212121</color>
     <color name="color_primary_dark">#ff212121</color>
     <color name="color_accent">#ffc107</color>
+
+    <color name="empty_country_flag_color">#dddddd</color>
 </resources>

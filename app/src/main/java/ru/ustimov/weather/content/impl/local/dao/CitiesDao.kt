@@ -14,4 +14,7 @@ internal interface CitiesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(city: RoomCity): Long
 
+    @Delete
+    fun delete(city: RoomCity)
+
 }

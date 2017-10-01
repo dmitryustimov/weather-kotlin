@@ -10,9 +10,9 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/search_fragment_app_bar_min_height"
+        android:minHeight="?actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:elevation="4dp"/>
+        app:elevation="@dimen/action_bar_elevation"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@android:layout/simple_list_item_2"/>
+            tools:listitem="@layout/list_item_search_result"/>
 
         <ru.ustimov.weather.ui.EmptyView
             android:id="@+id/emptyView"

@@ -16,14 +16,14 @@ internal data class RoomSearchHistory(
         @ColumnInfo(name = "created_at") private val createdAt: Long
 ) : Suggestion {
 
-    fun id(): Long? = id
+    fun id() = id
 
-    fun queryText(): String = queryText
+    fun queryText() = queryText
 
-    fun createdAt(): Long = createdAt
+    fun createdAt() = createdAt
 
-    override fun text(): CharSequence = queryText
+    override fun text() = queryText
 
-    override fun fromHistory(): Boolean = true
+    override fun fromHistory() = true
 
 }

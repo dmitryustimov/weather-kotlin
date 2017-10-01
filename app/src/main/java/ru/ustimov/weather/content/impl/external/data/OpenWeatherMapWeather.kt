@@ -13,16 +13,16 @@ internal data class OpenWeatherMapWeather(
         @SerializedName("weather") private val conditions: List<Condition>
 ) : Weather {
 
-    override fun dateTime(): Long = dateTime
+    override fun dateTime() = dateTime
 
-    override fun main(): Main = main
+    override fun main() = main
 
-    override fun wind(): Wind = wind
+    override fun wind() = wind
 
-    override fun clouds(): Clouds = clouds
+    override fun clouds() = clouds
 
     @Size(min = 0)
-    override fun conditions(): List<Condition> = conditions
+    override fun conditions() = conditions
 
     internal data class Main(
             @SerializedName("temp") private val temperature: Double,
@@ -33,19 +33,19 @@ internal data class OpenWeatherMapWeather(
     ) : Weather.Main {
 
         @FloatRange(from = -273.15)
-        override fun temperature(): Double = temperature
+        override fun temperature() = temperature
 
         @FloatRange(from = 0.0)
-        override fun pressure(): Double = pressure
+        override fun pressure() = pressure
 
         @FloatRange(from = 0.0, to = 100.0)
-        override fun humidity(): Double = humidity
+        override fun humidity() = humidity
 
         @FloatRange(from = -273.15)
-        override fun minTemperature(): Double = minTemperature
+        override fun minTemperature() = minTemperature
 
         @FloatRange(from = -273.15)
-        override fun maxTemperature(): Double = maxTemperature
+        override fun maxTemperature() = maxTemperature
 
     }
 
@@ -55,17 +55,17 @@ internal data class OpenWeatherMapWeather(
     ) : Weather.Wind {
 
         @FloatRange(from = 0.0)
-        override fun speed(): Double = speed
+        override fun speed() = speed
 
         @FloatRange(from = 0.0, to = 360.0)
-        override fun direction(): Double = direction
+        override fun direction() = direction
 
     }
 
     internal data class Clouds(@SerializedName("all") private val all: Double) : Weather.Clouds {
 
         @FloatRange(from = 0.0, to = 100.0)
-        override fun all(): Double = all
+        override fun all() = all
 
     }
 
@@ -75,11 +75,11 @@ internal data class OpenWeatherMapWeather(
             @SerializedName("icon") private val icon: String
     ) : Weather.Condition {
 
-        override fun id(): Int = id
+        override fun id() = id
 
-        override fun main(): String = main
+        override fun main() = main
 
-        override fun icon(): String = icon
+        override fun icon() = icon
 
     }
 

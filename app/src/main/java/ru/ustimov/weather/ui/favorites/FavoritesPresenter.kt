@@ -28,7 +28,11 @@ class FavoritesPresenter(private val appState: AppState) : RxMvpPresenter<Favori
 
     private fun onFavoritesLoaded(cities: List<City>) {
         viewState.showCities(cities)
-        if (cities.isEmpty()) viewState.showEmpty() else viewState.hideLoading()
+        if (cities.isEmpty()) {
+            viewState.showEmpty()
+        } else {
+            viewState.hideLoading()
+        }
     }
 
 }

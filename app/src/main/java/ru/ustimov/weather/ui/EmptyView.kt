@@ -1,6 +1,7 @@
 package ru.ustimov.weather.ui
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.support.v7.widget.AppCompatDrawableManager
 import android.util.AttributeSet
 import android.view.Gravity
@@ -15,7 +16,38 @@ class EmptyView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    private companion object {
+        private const val INDEX_DRAWABLE_TOP = 1
+    }
+
     var onActionButtonClickListener: () -> Unit = {}
+
+    var text: CharSequence?
+        get() = textView.text
+        set(value) {
+            textView.text = value
+            textView.visibility = if (text.isNullOrEmpty() && textView.compoundDrawables[INDEX_DRAWABLE_TOP] == null) GONE else VISIBLE
+        }
+
+    var drawable: Drawable?
+        get() = textView.compoundDrawables[INDEX_DRAWABLE_TOP]
+        set(value) {
+            textView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
+            textView.visibility = if (text.isNullOrEmpty() && drawable == null) GONE else VISIBLE
+        }
+
+    var drawableRes: Int
+        get() = 0
+        set(value) {
+            drawable = AppCompatDrawableManager.get().getDrawable(context, drawableRes)
+        }
+
+    var action: CharSequence?
+        get() = actionButton.text
+        set(value) {
+            actionButton.text = value
+            actionButton.visibility = if (text.isNullOrEmpty()) GONE else VISIBLE
+        }
 
     init {
         orientation = VERTICAL
@@ -30,21 +62,15 @@ class EmptyView @JvmOverloads constructor(
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.EmptyView, defStyleAttr, 0)
         try {
             val text = a.getText(R.styleable.EmptyView_android_text)
-            textView.text = text
+            this.text = text
 
-            var drawableRes = 0
             if (a.hasValue(R.styleable.EmptyView_android_drawable)) {
                 drawableRes = a.getResourceId(R.styleable.EmptyView_android_drawable, 0)
-                val drawable = AppCompatDrawableManager.get().getDrawable(context, drawableRes)
-                textView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null)
             }
 
-            textView.visibility = if (text.isNullOrEmpty() && drawableRes == 0) GONE else VISIBLE
-
             val action = a.getText(R.styleable.EmptyView_android_action)
-            actionButton.text = action
+            this.action = action
             actionButton.setOnClickListener({ onActionButtonClickListener() })
-            actionButton.visibility = if (action.isNullOrEmpty()) GONE else VISIBLE
         } finally {
             a.recycle()
         }

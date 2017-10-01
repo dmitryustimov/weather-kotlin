@@ -1,12 +1,14 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
 
         <item name="emptyTextStyle">@style/Widget.TextView.Empty</item>
         <item name="emptyActionStyle">@style/Widget.Button.Action.Borderless</item>
+
+        <item name="actionBarSize">@dimen/action_bar_min_height</item>
     </style>
 
     <style name="Widget.TextView.Empty" parent="TextAppearance.AppCompat">
@@ -14,6 +16,9 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="Widget.Button.Action.Borderless" parent="Widget.AppCompat.Button.Borderless.Colored"/>
+    <style name="Widget.Button.Action.Borderless" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:paddingLeft">@dimen/keyline_16</item>
+        <item name="android:paddingRight">@dimen/keyline_16</item>
+    </style>
 
 </resources>

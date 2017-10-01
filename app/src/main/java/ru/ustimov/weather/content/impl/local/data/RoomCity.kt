@@ -12,14 +12,14 @@ import ru.ustimov.weather.content.impl.local.Database
 internal data class RoomCity(
         @PrimaryKey(autoGenerate = false) @ColumnInfo(name = BaseColumns._ID) private val id: Long,
         @ColumnInfo(name = "name", collate = ColumnInfo.NOCASE) private val name: String?,
-        @ColumnInfo(name = "country", collate = ColumnInfo.NOCASE) private val country: String?,
+        @ColumnInfo(name = "country_code", collate = ColumnInfo.NOCASE) private val countryCode: String,
         @Embedded private val location: RoomLocation
 ) : City {
 
     constructor(city: City) : this(
             id = city.id(),
             name = city.name(),
-            country = city.country(),
+            countryCode = city.countryCode(),
             location = RoomLocation(city.location())
     )
 
@@ -27,7 +27,7 @@ internal data class RoomCity(
 
     override fun name() = name
 
-    override fun country() = country
+    override fun countryCode() = countryCode
 
     override fun location() = location
 

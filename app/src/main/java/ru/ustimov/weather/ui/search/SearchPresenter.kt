@@ -1,10 +1,13 @@
 package ru.ustimov.weather.ui.search
 
 import com.arellomobile.mvp.InjectViewState
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.functions.Function
 import io.reactivex.subjects.PublishSubject
 import ru.ustimov.weather.AppState
-import ru.ustimov.weather.content.data.CurrentWeather
+import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.content.data.SearchResult
 import ru.ustimov.weather.content.data.Suggestion
 import ru.ustimov.weather.rx.RxMvpPresenter
 import ru.ustimov.weather.util.println
@@ -19,6 +22,7 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
         super.onFirstViewAttach()
 
         querySubject.debounce({ getSearchDebounceSelector(it) })
+                .observeOn(appState.schedulers.mainThread())
                 .switchMap({ getCitiesOrSearchSuggestions(it) })
                 .compose(bindUntilDestroy())
                 .subscribeOn(appState.schedulers.mainThread())
@@ -52,14 +56,14 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
 
     private fun onUserTypes() {
         viewState.hideLoading()
-        viewState.showCities(emptyList())
+        viewState.showSearchResults(emptyList())
     }
 
     private fun onSuggestionsCompleted(suggestions: List<Suggestion>) {
         viewState.showSuggestions(suggestions)
     }
 
-    private fun onQueryTextSubmit(query: String): Observable<out List<CurrentWeather>> {
+    private fun onQueryTextSubmit(query: String): Observable<List<SearchResult>> {
         appState.repository.addSearchHistory(query)
                 .compose(bindUntilDestroy())
                 .subscribe({}, { it.println(appState.logger) })
@@ -67,9 +71,9 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
         return appState.repository.findCities(query)
                 .doOnSubscribe({ onSearchStarted() })
                 .observeOn(appState.schedulers.mainThread())
-                .doOnNext({ onSearchCompleted(it) })
-                .doOnError({ it.println(appState.logger) })
+                .doOnNext({ onSearchCompleted(query, it) })
                 .doOnError({ onSearchError(it) })
+                .onErrorResumeNext(Function { Flowable.empty() })
                 .toObservable()
     }
 
@@ -79,13 +83,25 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
     }
 
     private fun onSearchError(throwable: Throwable) {
+        throwable.println(appState.logger)
         viewState.showError(throwable)
         viewState.hideLoading()
     }
 
-    private fun onSearchCompleted(cities: List<CurrentWeather>) {
-        if (cities.isEmpty()) viewState.showEmpty() else viewState.showCities(cities)
+    private fun onSearchCompleted(query: String, searchResults: List<SearchResult>) {
+        if (searchResults.isEmpty()) {
+            viewState.showEmpty(query)
+        } else {
+            viewState.showSearchResults(searchResults)
+        }
         viewState.hideLoading()
+    }
+
+    fun addToFavorites(city: City): Boolean {
+        appState.repository.addToFavorites(city)
+                .compose(bindUntilDestroy())
+                .subscribe({}, { it.println(appState.logger) })
+        return true
     }
 
     data class Query(val text: String, val submit: Boolean)

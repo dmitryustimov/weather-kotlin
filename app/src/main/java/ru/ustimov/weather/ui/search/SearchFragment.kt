@@ -3,13 +3,14 @@ package ru.ustimov.weather.ui.search
 import android.os.Bundle
 import android.support.annotation.Size
 import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
-import com.globusltd.recyclerview.datasource.Datasources
 import com.globusltd.recyclerview.datasource.ListDatasource
 import com.globusltd.recyclerview.view.ItemClickHelper
 import kotlinx.android.extensions.CacheImplementation
@@ -17,8 +18,9 @@ import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.fragment_search.*
 import ru.ustimov.weather.R
 import ru.ustimov.weather.appState
-import ru.ustimov.weather.content.data.CurrentWeather
+import ru.ustimov.weather.content.data.SearchResult
 import ru.ustimov.weather.content.data.Suggestion
+import ru.ustimov.weather.content.impl.GlideImageLoader
 import ru.ustimov.weather.rx.RxLifecycleFragment
 import ru.ustimov.weather.rx.RxSearchView
 
@@ -34,7 +36,8 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     @InjectPresenter
     lateinit var presenter: SearchPresenter
 
-    private lateinit var suggestionsAdapter: SuggestionsAdapter
+    private lateinit var suggestionsDatasource: ListDatasource<Suggestion>
+    private lateinit var searchResultsDatasource: ListDatasource<SearchResult>
 
     @ProvidePresenter
     fun provideSearchPresenter(): SearchPresenter {
@@ -49,18 +52,27 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        suggestionsAdapter = SuggestionsAdapter()
-
+        suggestionsDatasource = ListDatasource()
+        val suggestionsAdapter = SuggestionsAdapter(suggestionsDatasource)
         searchView.shouldShowProgress = false
         searchView.adapter = suggestionsAdapter
-        val animator = DefaultItemAnimator()
-        animator.supportsChangeAnimations = false
-        searchView.setSearchItemAnimator(animator)
+        searchView.setSearchItemAnimator(DefaultItemAnimator())
 
         val suggestionsRecyclerView = searchView.findViewById<RecyclerView>(R.id.search_recyclerView)
-        val itemClickHelper = ItemClickHelper<Suggestion>(suggestionsAdapter)
-        itemClickHelper.setOnItemClickListener({ _, item, _ -> onSuggestionClick(item) })
-        itemClickHelper.setRecyclerView(suggestionsRecyclerView)
+        val suggestionsItemClickHelper = ItemClickHelper<Suggestion>(suggestionsAdapter)
+        suggestionsItemClickHelper.setOnItemClickListener({ _, item, _ -> onSuggestionClick(item) })
+        suggestionsItemClickHelper.setRecyclerView(suggestionsRecyclerView)
+
+        val imageLoader = GlideImageLoader(this)
+        searchResultsDatasource = ListDatasource()
+        val searchResultsAdapter = SearchResultsAdapter(searchResultsDatasource, imageLoader)
+        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.addItemDecoration(SearchResultsItemDecoration(context))
+        recyclerView.adapter = searchResultsAdapter
+        val searchResultsItemClickHelper = ItemClickHelper<SearchResult>(searchResultsAdapter)
+        searchResultsItemClickHelper.setOnItemClickListener({ v, item, position -> onSearchResultClick(v, item, position) })
+        searchResultsItemClickHelper.setRecyclerView(recyclerView)
     }
 
     private fun onSuggestionClick(item: Suggestion): Boolean {
@@ -68,6 +80,12 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
         searchView.hideKeyboard()
         return true
     }
+
+    private fun onSearchResultClick(view: View?, item: SearchResult, position: Int): Boolean =
+            when (view?.id) {
+            // TODO: R.id.action_add_favorites ->
+                else -> presenter.addToFavorites(item.city)
+            }
 
     override fun onResume() {
         super.onResume()
@@ -80,28 +98,54 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     }
 
     override fun showSuggestions(suggestions: List<Suggestion>) {
-        val datasource = ListDatasource<Suggestion>(suggestions)
-        suggestionsAdapter.swap(datasource)
+        suggestionsDatasource.clear()
+        suggestionsDatasource.addAll(suggestions)
         searchView.showSuggestions()
+        searchView.setShadow(suggestions.isNotEmpty())
     }
 
     override fun hideSuggestions() {
+        searchView.setShadow(false)
         searchView.hideSuggestions()
-        suggestionsAdapter.swap(Datasources.empty())
+        suggestionsDatasource.clear()
     }
 
     override fun showLoading() = searchView.showProgress()
 
-    override fun showEmpty() {
+    override fun showEmpty(query: CharSequence) {
+        searchResultsDatasource.clear()
 
+        recyclerView.visibility = View.GONE
+        emptyView.visibility = View.VISIBLE
+
+        val placeholder = context.getText(R.string.empty_search_results_for_query_x) as String
+        val source = String.format(placeholder, query)
+        emptyView.text = Html.fromHtml(source)
+
+        emptyView.action = context.getString(R.string.action_try_again)
+        emptyView.onActionButtonClickListener = this::onTryAgainClick
     }
 
-    override fun showCities(@Size(min = 1) cities: List<CurrentWeather>) {
+    private fun onTryAgainClick() {
+        emptyView.visibility = View.GONE
 
+        searchView.showKeyboard()
+        searchView.setQuery("", false)
+    }
+
+    override fun showSearchResults(@Size(min = 1) searchResults: List<SearchResult>) {
+        searchResultsDatasource.clear()
+        searchResultsDatasource.addAll(searchResults)
+
+        emptyView.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
     }
 
     override fun showError(throwable: Throwable) {
-
+        emptyView.text = throwable.message
+        emptyView.action = null
+        emptyView.onActionButtonClickListener = {}
+        // TODO: show error
     }
 
     override fun hideLoading() = searchView.hideProgress()

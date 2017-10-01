@@ -3,8 +3,6 @@ package ru.ustimov.weather
 import android.app.Application
 import android.content.Context
 import android.os.StrictMode
-import ru.ustimov.weather.content.ExternalDatasource
-import ru.ustimov.weather.content.LocalDatasource
 import ru.ustimov.weather.content.impl.DefaultRepository
 import ru.ustimov.weather.content.impl.DefaultSchedulers
 import ru.ustimov.weather.content.impl.external.DefaultExternalDatasource

@@ -4,7 +4,7 @@ import android.support.annotation.Size
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.ustimov.weather.content.data.CurrentWeather
+import ru.ustimov.weather.content.data.SearchResult
 import ru.ustimov.weather.content.data.Suggestion
 
 interface SearchView : MvpView {
@@ -19,10 +19,10 @@ interface SearchView : MvpView {
     fun showLoading()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showEmpty()
+    fun showEmpty(query: CharSequence)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showCities(@Size(min = 1) cities: List<CurrentWeather>)
+    fun showSearchResults(@Size(min = 1) searchResults: List<SearchResult>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun showError(throwable: Throwable)

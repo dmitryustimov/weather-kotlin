@@ -13,8 +13,8 @@ internal interface SearchHistoryDao {
 
     @Query("select * from ${Database.Tables.SEARCH_HISTORY} " +
             "where query_text like :query || '%' " +
-            "order by created_at desc limit 5")
-    fun getLatest(query: String): Flowable<List<RoomSearchHistory>>
+            "order by created_at desc limit :limit")
+    fun getLatest(query: String, limit: Int): Flowable<List<RoomSearchHistory>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(searchHistory: RoomSearchHistory): Long

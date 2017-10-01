@@ -8,6 +8,12 @@ import ru.ustimov.weather.content.impl.external.data.OpenWeatherMapCurrentWeathe
 
 internal interface OpenWeatherMapApi {
 
+    companion object {
+        internal const val QUERY_PARAM_APP_ID = "appid"
+        internal const val QUERY_PARAM_UNITS = "units"
+        internal const val QUERY_PARAM_UNITS_VALUE = "metric"
+    }
+
     @GET("find")
     fun find(@Query("q") query: String): Single<ArrayResponse<OpenWeatherMapCurrentWeather>>
 

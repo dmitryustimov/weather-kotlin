@@ -6,7 +6,7 @@ interface City {
 
     fun name(): String?
 
-    fun country(): String?
+    fun countryCode(): String
 
     fun location(): Location
 
