@@ -70,6 +70,7 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.addItemDecoration(SearchResultsItemDecoration(context))
         recyclerView.adapter = searchResultsAdapter
+
         val searchResultsItemClickHelper = ItemClickHelper<SearchResult>(searchResultsAdapter)
         searchResultsItemClickHelper.setOnItemClickListener({ v, item, position -> onSearchResultClick(v, item, position) })
         searchResultsItemClickHelper.setRecyclerView(recyclerView)
@@ -83,8 +84,8 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
 
     private fun onSearchResultClick(view: View?, item: SearchResult, position: Int): Boolean =
             when (view?.id) {
-            // TODO: R.id.action_add_favorites ->
-                else -> presenter.addToFavorites(item.city)
+                R.id.actionToggleFavoritesView -> false //presenter.addToFavorites(item.city)
+                else -> false
             }
 
     override fun onResume() {

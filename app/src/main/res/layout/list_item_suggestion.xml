@@ -15,7 +15,7 @@
     android:paddingStart="?listPreferredItemPaddingLeft">
 
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/iconView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@null"
@@ -24,7 +24,7 @@
         tools:src="@drawable/ic_history"/>
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/textView"
         style="?textAppearanceListItemSecondary"
         android:layout_width="0dp"
         android:layout_height="match_parent"

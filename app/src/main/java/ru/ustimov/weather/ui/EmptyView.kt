@@ -2,7 +2,7 @@ package ru.ustimov.weather.ui
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.AppCompatDrawableManager
+import android.support.v7.content.res.AppCompatResources
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
@@ -39,7 +39,7 @@ class EmptyView @JvmOverloads constructor(
     var drawableRes: Int
         get() = 0
         set(value) {
-            drawable = AppCompatDrawableManager.get().getDrawable(context, drawableRes)
+            drawable = AppCompatResources.getDrawable(context, drawableRes)
         }
 
     var action: CharSequence?

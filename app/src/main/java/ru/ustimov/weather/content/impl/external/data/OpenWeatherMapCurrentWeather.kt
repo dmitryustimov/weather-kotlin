@@ -21,11 +21,11 @@ internal class OpenWeatherMapCurrentWeather(
     @Expose
     private var lazyCity: City? = null
 
-
     @Expose
     private var lazyWeather: Weather? = null
 
     override fun city(): City {
+        // This probably will never happen with DTO or nullable objects
         if (lazyCity == null) {
             lazyCity = OpenWeatherMapCity(id, name, sys.country.orEmpty(), location)
         }
@@ -33,6 +33,7 @@ internal class OpenWeatherMapCurrentWeather(
     }
 
     override fun weather(): Weather {
+        // This probably will never happen with DTO or nullable objects
         if (lazyWeather == null) {
             lazyWeather = OpenWeatherMapWeather(dateTime, main, wind, clouds, conditions)
         }

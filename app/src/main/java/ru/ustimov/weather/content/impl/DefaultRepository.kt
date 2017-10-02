@@ -41,9 +41,9 @@ class DefaultRepository(
     override fun findCities(query: String): Flowable<List<SearchResult>> =
             externalDatasource.findCities(query)
                     .observeOn(schedulers.computation())
-                    .flatMapPublisher({ getCitiesAndCountries(it) })
+                    .flatMapPublisher(this::getCitiesAndCountries)
                     .observeOn(schedulers.computation())
-                    .map({ createSearchResults(it) })
+                    .map(this::createSearchResults)
 
     private fun getCitiesAndCountries(cities: List<CurrentWeather>): Flowable<Pair<List<CurrentWeather>, List<Country>>> {
         val citiesFlowable = Flowable.just(cities)

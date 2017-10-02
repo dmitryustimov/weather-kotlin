@@ -21,13 +21,29 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
 
-        querySubject.debounce({ getSearchDebounceSelector(it) })
+        querySubject.debounce(this::getSearchDebounceSelector)
                 .observeOn(appState.schedulers.mainThread())
-                .switchMap({ getCitiesOrSearchSuggestions(it) })
+                .switchMap(this::getCitiesOrSearchSuggestions)
                 .compose(bindUntilDestroy())
                 .subscribeOn(appState.schedulers.mainThread())
                 .observeOn(appState.schedulers.mainThread())
                 .subscribe({ }, { it.println(appState.logger) })
+
+        /*Flowable.fromCallable({
+            val flickr = Flickr("2bc64dda9a84a1ce1a297ee89bc87f1a")
+            val places = flickr.placesInterface.findByLatLon(55.7522, 37.6156, Flickr.ACCURACY_CITY)
+            val searchParams = SearchParameters()
+            searchParams.placeId = places[0]?.placeId ?: ""
+            searchParams.accuracy = Flickr.ACCURACY_CITY
+            searchParams.media = "photos"
+            searchParams.isInCommons = true
+            searchParams.safeSearch = Flickr.SAFETYLEVEL_SAFE
+            val photos = flickr.photosInterface.search(searchParams, 10, 0)
+            photos
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ Log.i("111", it.toString()) }, { it.printStackTrace() })*/
     }
 
     fun onQueryChanged(query: String, submit: Boolean) = querySubject.onNext(Query(query, submit))
@@ -64,10 +80,7 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
     }
 
     private fun onQueryTextSubmit(query: String): Observable<List<SearchResult>> {
-        appState.repository.addSearchHistory(query)
-                .compose(bindUntilDestroy())
-                .subscribe({}, { it.println(appState.logger) })
-
+        addSearchHistory(query)
         return appState.repository.findCities(query)
                 .doOnSubscribe({ onSearchStarted() })
                 .observeOn(appState.schedulers.mainThread())
@@ -75,6 +88,12 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
                 .doOnError({ onSearchError(it) })
                 .onErrorResumeNext(Function { Flowable.empty() })
                 .toObservable()
+    }
+
+    private fun addSearchHistory(query: String) {
+        appState.repository.addSearchHistory(query)
+                .compose(bindUntilDestroy())
+                .subscribe({}, { it.println(appState.logger) })
     }
 
     private fun onSearchStarted() {

@@ -24,7 +24,8 @@ class SearchResultsAdapter(
 
     override fun get(position: Int): SearchResult = datasource[position]
 
-    override fun getClickableViews(position: Int, viewType: Int): ClickableViews = ClickableViews.ITEM_VIEW
+    override fun getClickableViews(position: Int, viewType: Int): ClickableViews =
+            ClickableViews(ClickableViews.ITEM_VIEW_ID, R.id.actionToggleFavoritesView)
 
     override fun onCreateViewHolder(inflater: LayoutInflater, parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = inflater.inflate(R.layout.list_item_search_result, parent, false)

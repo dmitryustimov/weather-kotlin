@@ -35,8 +35,8 @@ class SuggestionsAdapter(datasource: Datasource<Suggestion>) : Adapter<Suggestio
             LayoutContainer {
 
         fun bindSuggestion(suggestion: Suggestion) {
-            icon.setImageResource(if (suggestion.fromHistory()) R.drawable.ic_history else R.drawable.ic_empty)
-            text.text = suggestion.text()
+            iconView.setImageResource(if (suggestion.fromHistory()) R.drawable.ic_history else R.drawable.ic_empty)
+            textView.text = suggestion.text()
         }
 
     }
