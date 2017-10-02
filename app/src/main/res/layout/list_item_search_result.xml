@@ -11,24 +11,85 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:minHeight="?listPreferredItemHeight"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:layout_marginBottom="@dimen/keyline_8"
+            android:layout_marginEnd="@dimen/keyline_16"
+            android:layout_marginLeft="@dimen/keyline_16"
+            android:layout_marginRight="@dimen/keyline_16"
+            android:layout_marginStart="@dimen/keyline_16"
+            android:layout_marginTop="@dimen/keyline_16"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/temperatureView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textStyle="bold"
+                android:typeface="serif"
+                tools:text="17°C"/>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="@dimen/keyline_16"
-                android:layout_marginEnd="@dimen/keyline_16"
                 android:layout_marginLeft="@dimen/keyline_16"
-                android:layout_marginRight="@dimen/keyline_16"
                 android:layout_marginStart="@dimen/keyline_16"
-                android:layout_marginTop="@dimen/keyline_16"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/windView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    tools:text="Wind: 3 m/s"/>
+
+                <TextView
+                    android:id="@+id/humidityView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    tools:text="Humidity: 20%"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/keyline_16"
+            android:layout_marginRight="@dimen/keyline_16"
+            android:background="?android:listDivider"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/keyline_8"
+            android:layout_marginEnd="@dimen/keyline_16"
+            android:layout_marginLeft="@dimen/keyline_16"
+            android:layout_marginRight="@dimen/keyline_16"
+            android:layout_marginStart="@dimen/keyline_16"
+            android:layout_marginTop="@dimen/keyline_8"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/keyline_16"
+                android:layout_marginRight="@dimen/keyline_16"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -36,6 +97,7 @@
                     android:id="@+id/cityView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:lines="1"
                     android:maxLines="1"
                     android:textAppearance="?android:textAppearanceListItem"
@@ -61,6 +123,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/keyline_4"
                         android:layout_marginStart="@dimen/keyline_4"
+                        android:ellipsize="end"
                         android:gravity="center_vertical"
                         android:lines="1"
                         android:maxLines="1"
@@ -71,52 +134,19 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/temperatureView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginBottom="@dimen/keyline_16"
-                android:layout_marginEnd="@dimen/keyline_16"
-                android:layout_marginRight="@dimen/keyline_16"
-                android:layout_marginTop="@dimen/keyline_16"
-                android:textAppearance="?android:textAppearanceLarge"
-                tools:text="17 °C"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginEnd="@dimen/keyline_16"
-            android:layout_marginLeft="@dimen/keyline_16"
-            android:layout_marginRight="@dimen/keyline_16"
-            android:layout_marginStart="@dimen/keyline_16"
-            android:background="?android:listDivider"/>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/keyline_8"
-            android:layout_marginEnd="@dimen/keyline_16"
-            android:layout_marginLeft="@dimen/keyline_16"
-            android:layout_marginRight="@dimen/keyline_16"
-            android:layout_marginStart="@dimen/keyline_16"
-            android:layout_marginTop="@dimen/keyline_8">
-
             <ru.ustimov.weather.ui.CheckedImageView
                 android:id="@+id/actionToggleFavoritesView"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center_vertical|end"
                 android:background="?selectableItemBackgroundBorderless"
+                android:checked="false"
                 android:contentDescription="@null"
                 android:scaleType="centerInside"
-                android:checked="false"
                 app:srcCompat="@drawable/ic_action_favorites"
                 app:tint="@color/search_result_action_favorites_tint_color"/>
 
-        </FrameLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -77,8 +77,6 @@ dependencies {
     compile "android.arch.persistence.room:rxjava2:1.0.0-beta1"
     kapt "android.arch.persistence.room:compiler:1.0.0-beta1"
 
-    compile 'com.googlecode.flickrj-android:flickrj-android:2.1.0'
-
     testCompile 'junit:junit:4.12'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {

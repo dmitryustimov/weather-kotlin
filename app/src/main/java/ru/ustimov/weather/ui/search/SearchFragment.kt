@@ -18,6 +18,7 @@ import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.fragment_search.*
 import ru.ustimov.weather.R
 import ru.ustimov.weather.appState
+import ru.ustimov.weather.content.data.City
 import ru.ustimov.weather.content.data.SearchResult
 import ru.ustimov.weather.content.data.Suggestion
 import ru.ustimov.weather.content.impl.GlideImageLoader
@@ -37,7 +38,9 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     lateinit var presenter: SearchPresenter
 
     private lateinit var suggestionsDatasource: ListDatasource<Suggestion>
+    private lateinit var suggestionsAdapter: SuggestionsAdapter
     private lateinit var searchResultsDatasource: ListDatasource<SearchResult>
+    private lateinit var searchResultsAdapter: SearchResultsAdapter
 
     @ProvidePresenter
     fun provideSearchPresenter(): SearchPresenter {
@@ -53,7 +56,7 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
         super.onViewCreated(view, savedInstanceState)
 
         suggestionsDatasource = ListDatasource()
-        val suggestionsAdapter = SuggestionsAdapter(suggestionsDatasource)
+        suggestionsAdapter = SuggestionsAdapter(suggestionsDatasource)
         searchView.shouldShowProgress = false
         searchView.adapter = suggestionsAdapter
         searchView.setSearchItemAnimator(DefaultItemAnimator())
@@ -65,14 +68,14 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
 
         val imageLoader = GlideImageLoader(this)
         searchResultsDatasource = ListDatasource()
-        val searchResultsAdapter = SearchResultsAdapter(searchResultsDatasource, imageLoader)
+        searchResultsAdapter = SearchResultsAdapter(searchResultsDatasource, imageLoader)
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.addItemDecoration(SearchResultsItemDecoration(context))
         recyclerView.adapter = searchResultsAdapter
 
         val searchResultsItemClickHelper = ItemClickHelper<SearchResult>(searchResultsAdapter)
-        searchResultsItemClickHelper.setOnItemClickListener({ v, item, position -> onSearchResultClick(v, item, position) })
+        searchResultsItemClickHelper.setOnItemClickListener({ v, item, _ -> onSearchResultClick(v, item) })
         searchResultsItemClickHelper.setRecyclerView(recyclerView)
     }
 
@@ -82,10 +85,17 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
         return true
     }
 
-    private fun onSearchResultClick(view: View?, item: SearchResult, position: Int): Boolean =
+    private fun onSearchResultClick(view: View?, item: SearchResult): Boolean =
             when (view?.id) {
-                R.id.actionToggleFavoritesView -> false //presenter.addToFavorites(item.city)
+                R.id.actionToggleFavoritesView -> onActionToggleFavoritesClick(item.city)
                 else -> false
+            }
+
+    private fun onActionToggleFavoritesClick(city: City) =
+            if (searchResultsAdapter.isFavorite(city)) {
+                presenter.removeFromFavorites(city)
+            } else {
+                presenter.addToFavorites(city)
             }
 
     override fun onResume() {
@@ -98,7 +108,12 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
                 .subscribe()
     }
 
-    override fun showSuggestions(suggestions: List<Suggestion>) {
+    override fun onFavoritesLoaded(cities: List<City>) {
+        searchResultsAdapter.favorites = cities
+    }
+
+    override fun showSuggestions(query: String, suggestions: List<Suggestion>) {
+        suggestionsAdapter.query = query
         suggestionsDatasource.clear()
         suggestionsDatasource.addAll(suggestions)
         searchView.showSuggestions()
@@ -106,6 +121,7 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     }
 
     override fun hideSuggestions() {
+        suggestionsAdapter.query = ""
         searchView.setShadow(false)
         searchView.hideSuggestions()
         suggestionsDatasource.clear()
@@ -113,7 +129,7 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
 
     override fun showLoading() = searchView.showProgress()
 
-    override fun showEmpty(query: CharSequence) {
+    override fun showEmpty(query: String) {
         searchResultsDatasource.clear()
 
         recyclerView.visibility = View.GONE
