@@ -10,6 +10,10 @@
     <string name="action_settings">Settings</string>
     <string name="action_try_again">Try again</string>
 
+    <string name="message_database_exception"></string>
+    <string name="message_network_exception"></string>
+    <string name="message_unknown_exception"></string>
+
     <string name="favorites_empty_text">You have no favorites yet</string>
     <string name="favorites_empty_action">Find city</string>
 

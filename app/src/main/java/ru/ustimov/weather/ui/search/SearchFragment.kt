@@ -24,6 +24,7 @@ import ru.ustimov.weather.content.data.Suggestion
 import ru.ustimov.weather.content.impl.GlideImageLoader
 import ru.ustimov.weather.rx.RxLifecycleFragment
 import ru.ustimov.weather.rx.RxSearchView
+import ru.ustimov.weather.ui.EmptyViewInfoFactory
 
 @ContainerOptions(CacheImplementation.SPARSE_ARRAY)
 class SearchFragment : RxLifecycleFragment(), SearchView {
@@ -41,6 +42,12 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     private lateinit var suggestionsAdapter: SuggestionsAdapter
     private lateinit var searchResultsDatasource: ListDatasource<SearchResult>
     private lateinit var searchResultsAdapter: SearchResultsAdapter
+
+    private val actions = EmptyViewInfoFactory.Actions(
+            doOnDatabaseException = this::onDatabaseExceptionTryAgainClick,
+            doOnNetworkException = this::onNetworkExceptionTryAgainClick,
+            doOnUnknownException = this::onUnknownExceptionTryAgainClick
+    )
 
     @ProvidePresenter
     fun provideSearchPresenter(): SearchPresenter {
@@ -132,15 +139,15 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     override fun showEmpty(query: String) {
         searchResultsDatasource.clear()
 
-        recyclerView.visibility = View.GONE
-        emptyView.visibility = View.VISIBLE
-
         val placeholder = context.getText(R.string.empty_search_results_for_query_x) as String
         val source = String.format(placeholder, query)
         emptyView.text = Html.fromHtml(source)
 
         emptyView.action = context.getString(R.string.action_try_again)
         emptyView.onActionButtonClickListener = this::onTryAgainClick
+
+        recyclerView.visibility = View.GONE
+        emptyView.visibility = View.VISIBLE
     }
 
     private fun onTryAgainClick() {
@@ -159,10 +166,26 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
     }
 
     override fun showError(throwable: Throwable) {
-        emptyView.text = throwable.message
-        emptyView.action = null
-        emptyView.onActionButtonClickListener = {}
-        // TODO: show error
+        val info = EmptyViewInfoFactory.fromThrowable(context, throwable, actions)
+        info.apply(emptyView)
+
+        recyclerView.visibility = View.GONE
+        emptyView.visibility = View.VISIBLE
+    }
+
+    private fun onDatabaseExceptionTryAgainClick() {
+        emptyView.visibility = View.GONE
+        searchView.setQuery(searchView.query, false)
+    }
+
+    private fun onNetworkExceptionTryAgainClick() {
+        emptyView.visibility = View.GONE
+        searchView.setQuery(searchView.query, true)
+    }
+
+    private fun onUnknownExceptionTryAgainClick() {
+        emptyView.visibility = View.GONE
+        searchView.setQuery(searchView.query, false)
     }
 
     override fun hideLoading() = searchView.hideProgress()

@@ -10,6 +10,7 @@ import ru.ustimov.weather.content.data.City
 import ru.ustimov.weather.content.data.SearchResult
 import ru.ustimov.weather.content.data.Suggestion
 import ru.ustimov.weather.rx.RxMvpPresenter
+import ru.ustimov.weather.usecase.*
 import ru.ustimov.weather.util.println
 import java.util.concurrent.TimeUnit
 
@@ -17,6 +18,13 @@ import java.util.concurrent.TimeUnit
 class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchView>() {
 
     private val querySubject: PublishSubject<Query> = PublishSubject.create()
+
+    private val queryFavoritesUsecase = QueryFavoritesUsecase(appState.repository)
+    private val querySearchSuggestionsUsecase = QuerySearchSuggestionsUsecase(appState.repository)
+    private val findSearchResultsUsecase = FindSearchResultsUsecase(appState.repository)
+    private val addToSearchHistoryUsecase = AddToSearchHistoryUsecase(appState.repository)
+    private val addToFavoritesUsecase = AddToFavoritesUsecase(appState.repository)
+    private val removeFromFavoritesUsecase = RemoveFromFavoritesUsecase(appState.repository)
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -29,16 +37,10 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
                 .observeOn(appState.schedulers.mainThread())
                 .subscribe({ }, { it.println(appState.logger) })
 
-        getFavoritesOrEmpty()
+        queryFavoritesUsecase.run(QueryFavoritesUsecase.Params())
                 .compose(bindUntilDestroy())
                 .observeOn(appState.schedulers.mainThread())
                 .subscribe(this::onFavoritesLoaded, {})
-    }
-
-    private fun getFavoritesOrEmpty(): Flowable<out List<City>> {
-        return appState.repository.getFavorites()
-                .doOnError({ it.println(appState.logger) })
-                .onErrorResumeNext(Flowable.empty())
     }
 
     private fun onFavoritesLoaded(cities: List<City>) {
@@ -62,7 +64,7 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
             }
 
     private fun onQueryTextChanged(query: String): Observable<out List<Suggestion>> =
-            appState.repository.getSearchSuggestions(query)
+            querySearchSuggestionsUsecase.run(QuerySearchSuggestionsUsecase.Params(query))
                     .doOnSubscribe({ onUserTypes() })
                     .debounce(400L, TimeUnit.MILLISECONDS, appState.schedulers.mainThread())
                     .observeOn(appState.schedulers.mainThread())
@@ -78,9 +80,9 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
         viewState.showSuggestions(query, suggestions)
     }
 
-    private fun onQueryTextSubmit(query: String): Observable<List<SearchResult>> {
-        addSearchHistory(query)
-        return appState.repository.findCities(query)
+    private fun onQueryTextSubmit(query: String): Observable<out List<SearchResult>> {
+        addToSearchHistory(query)
+        return findSearchResultsUsecase.run(FindSearchResultsUsecase.Params(query))
                 .doOnSubscribe({ onSearchStarted() })
                 .observeOn(appState.schedulers.mainThread())
                 .doOnNext({ onSearchCompleted(query, it) })
@@ -89,8 +91,8 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
                 .toObservable()
     }
 
-    private fun addSearchHistory(query: String) {
-        appState.repository.addSearchHistory(query)
+    private fun addToSearchHistory(query: String) {
+        addToSearchHistoryUsecase.run(AddToSearchHistoryUsecase.Params(query))
                 .compose(bindUntilDestroy())
                 .subscribe({}, { it.println(appState.logger) })
     }
@@ -116,14 +118,14 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
     }
 
     fun addToFavorites(city: City): Boolean {
-        appState.repository.addToFavorites(city)
+        addToFavoritesUsecase.run(AddToFavoritesUsecase.Params(city))
                 .compose(bindUntilDestroy())
                 .subscribe({}, { it.println(appState.logger) })
         return true
     }
 
     fun removeFromFavorites(city: City): Boolean {
-        appState.repository.removeFromFavorites(city)
+        removeFromFavoritesUsecase.run(RemoveFromFavoritesUsecase.Params(city))
                 .compose(bindUntilDestroy())
                 .subscribe({}, { it.println(appState.logger) })
         return true

@@ -18,6 +18,7 @@ import ru.ustimov.weather.content.impl.local.data.RoomCity
 import ru.ustimov.weather.content.impl.local.data.RoomCountry
 import ru.ustimov.weather.content.impl.local.data.RoomSearchHistory
 import ru.ustimov.weather.util.Logger
+import ru.ustimov.weather.util.println
 
 class DefaultLocalDatasource(
         context: Context,
@@ -53,6 +54,7 @@ class DefaultLocalDatasource(
     override fun getFavorites(): Flowable<out List<City>> =
             database.cities().getAll()
                     .doOnNext({ logger.d(TAG, "Loaded ${it.size} favorites") })
+                    .doOnError({ it.println(logger) })
                     .onErrorResumeNext(Function { RoomExceptionFactory.flowable(it) })
                     .subscribeOn(schedulers.io())
 
@@ -75,10 +77,11 @@ class DefaultLocalDatasource(
     override fun getSearchHistory(query: String, limit: Int): Flowable<out List<Suggestion>> =
             database.searchHistory().getLatest(query, limit)
                     .doOnNext({ logger.d(TAG, "Loaded ${it.size} search history entities") })
+                    .doOnError({ it.println(logger) })
                     .onErrorResumeNext(Function { RoomExceptionFactory.flowable(it) })
                     .subscribeOn(schedulers.io())
 
-    override fun addSearchHistory(query: String): Single<out Suggestion> =
+    override fun addToSearchHistory(query: String): Single<out Suggestion> =
             query.toSingle()
                     .map({ RoomSearchHistory(queryText = it, createdAt = System.currentTimeMillis()) })
                     .doOnSuccess({ database.searchHistory().insert(it) })
@@ -90,12 +93,14 @@ class DefaultLocalDatasource(
     override fun getCountries(codes: List<String>): Flowable<out List<Country>> =
             database.countries().get(codes)
                     .doOnNext({ logger.d(TAG, "Loaded ${it.size} countries") })
+                    .doOnError({ it.println(logger) })
                     .onErrorResumeNext(Function { RoomExceptionFactory.flowable(it) })
                     .subscribeOn(schedulers.io())
 
     override fun getCountry(code: String): Flowable<out Country> =
             database.countries().get(code)
                     .doOnNext({ logger.d(TAG, "Loaded $it") })
+                    .doOnError({ it.println(logger) })
                     .onErrorResumeNext(Function { RoomExceptionFactory.flowable(it) })
                     .subscribeOn(schedulers.io())
 

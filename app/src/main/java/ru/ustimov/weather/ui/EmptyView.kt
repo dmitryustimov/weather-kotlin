@@ -26,7 +26,7 @@ class EmptyView @JvmOverloads constructor(
         get() = textView.text
         set(value) {
             textView.text = value
-            textView.visibility = if (text.isNullOrEmpty() && textView.compoundDrawables[INDEX_DRAWABLE_TOP] == null) GONE else VISIBLE
+            textView.visibility = if (value.isNullOrEmpty() && textView.compoundDrawables[INDEX_DRAWABLE_TOP] == null) GONE else VISIBLE
         }
 
     var drawable: Drawable?
@@ -46,7 +46,7 @@ class EmptyView @JvmOverloads constructor(
         get() = actionButton.text
         set(value) {
             actionButton.text = value
-            actionButton.visibility = if (text.isNullOrEmpty()) GONE else VISIBLE
+            actionButton.visibility = if (value.isNullOrEmpty()) GONE else VISIBLE
         }
 
     init {
@@ -74,6 +74,22 @@ class EmptyView @JvmOverloads constructor(
         } finally {
             a.recycle()
         }
+    }
+
+    data class Info(
+            private val text: CharSequence? = null,
+            private val drawable: Drawable? = null,
+            private val action: CharSequence? = null,
+            private val listener: () -> Unit = {}
+    ) {
+
+        fun apply(emptyView: EmptyView) {
+            emptyView.action = action
+            emptyView.drawable = drawable
+            emptyView.action = action
+            emptyView.onActionButtonClickListener = listener
+        }
+
     }
 
 }

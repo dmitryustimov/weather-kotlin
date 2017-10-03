@@ -14,7 +14,7 @@ interface Repository {
 
     fun getSearchSuggestions(query: String): Flowable<out List<Suggestion>>
 
-    fun addSearchHistory(query: String): Single<out Suggestion>
+    fun addToSearchHistory(query: String): Single<out Suggestion>
 
     fun findCities(query: String): Flowable<List<SearchResult>>
 

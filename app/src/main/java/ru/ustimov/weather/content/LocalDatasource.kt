@@ -16,7 +16,7 @@ interface LocalDatasource {
 
     fun getSearchHistory(query: String, limit: Int): Flowable<out List<Suggestion>>
 
-    fun addSearchHistory(query: String): Single<out Suggestion>
+    fun addToSearchHistory(query: String): Single<out Suggestion>
 
     fun getCountries(codes: List<String>): Flowable<out List<Country>>
 

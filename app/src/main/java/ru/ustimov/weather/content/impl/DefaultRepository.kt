@@ -35,15 +35,19 @@ class DefaultRepository(
                 localDatasource.getSearchHistory(query, MAX_SEARCH_HISTORY_SIZE)
             }
 
-    override fun addSearchHistory(query: String): Single<out Suggestion> =
-            localDatasource.addSearchHistory(query)
+    override fun addToSearchHistory(query: String): Single<out Suggestion> =
+            localDatasource.addToSearchHistory(query)
 
     override fun findCities(query: String): Flowable<List<SearchResult>> =
-            externalDatasource.findCities(query)
-                    .observeOn(schedulers.computation())
-                    .flatMapPublisher(this::getCitiesAndCountries)
-                    .observeOn(schedulers.computation())
-                    .map(this::createSearchResults)
+            if (query.length < MIN_QUERY_LENGTH) {
+                Flowable.empty()
+            } else {
+                externalDatasource.findCities(query)
+                        .observeOn(schedulers.computation())
+                        .flatMapPublisher(this::getCitiesAndCountries)
+                        .observeOn(schedulers.computation())
+                        .map(this::createSearchResults)
+            }
 
     private fun getCitiesAndCountries(cities: List<CurrentWeather>): Flowable<Pair<List<CurrentWeather>, List<Country>>> {
         val citiesFlowable = Flowable.just(cities)
