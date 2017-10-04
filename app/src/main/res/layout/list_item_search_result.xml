@@ -113,8 +113,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:contentDescription="@null"
-                android:minHeight="@dimen/list_item_search_result_country_flag_height"
-                android:minWidth="@dimen/list_item_search_result_country_flag_width"
+                android:minHeight="@dimen/country_flag_height"
+                android:minWidth="@dimen/country_flag_width"
                 android:scaleType="centerInside"
                 android:src="@drawable/empty_country_flag"/>
 

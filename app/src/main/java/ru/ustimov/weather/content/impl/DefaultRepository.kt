@@ -22,7 +22,21 @@ class DefaultRepository(
         private const val MAX_SEARCH_HISTORY_SIZE = 5
     }
 
-    override fun getFavorites(): Flowable<out List<City>> = localDatasource.getFavorites()
+    override fun getFavorites(): Flowable<List<Favorite>> =
+            localDatasource.getFavorites()
+                    .observeOn(schedulers.computation())
+                    .flatMap({ getObjectsAndCountries(it, { it.countryCode() }) })
+                    .observeOn(schedulers.computation())
+                    .map(this::createFavorites)
+
+    private fun createFavorites(pair: Pair<List<City>, List<Country>>): List<Favorite> {
+        val countries = pair.second
+        val cities = pair.first
+        return cities.map { city ->
+            val country = countries.find { it.code() == city.countryCode() }
+            Favorite(city, country!!)
+        }
+    }
 
     override fun addToFavorites(city: City): Single<out City> = localDatasource.addToFavorites(city)
 
@@ -44,16 +58,17 @@ class DefaultRepository(
             } else {
                 externalDatasource.findCities(query)
                         .observeOn(schedulers.computation())
-                        .flatMapPublisher(this::getCitiesAndCountries)
+                        .flatMapPublisher({ getObjectsAndCountries(it, { it.city().countryCode() }) })
                         .observeOn(schedulers.computation())
                         .map(this::createSearchResults)
             }
 
-    private fun getCitiesAndCountries(cities: List<CurrentWeather>): Flowable<Pair<List<CurrentWeather>, List<Country>>> {
-        val citiesFlowable = Flowable.just(cities)
-        val distinctCountryCodes = cities.map { it.city().countryCode() }.distinct()
+    private fun <T> getObjectsAndCountries(objects: List<T>, countryCodeTransform: (T) -> String):
+            Flowable<Pair<List<T>, List<Country>>> {
+        val objectsFlowable = Flowable.just(objects)
+        val distinctCountryCodes = objects.map(countryCodeTransform).distinct()
         val countriesFlowable = getCountries(distinctCountryCodes)
-        return Flowable.zip(citiesFlowable, countriesFlowable, BiFunction({ a, b -> Pair(a, b) }))
+        return Flowable.zip(objectsFlowable, countriesFlowable, BiFunction({ a, b -> Pair(a, b) }))
     }
 
     private fun getCountries(codes: List<String>): Flowable<List<Country>> {

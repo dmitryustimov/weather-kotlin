@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.list_item_search_result.*
 import ru.ustimov.weather.R
 import ru.ustimov.weather.content.ImageLoader
 import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.content.data.Favorite
 import ru.ustimov.weather.content.data.SearchResult
 
 class SearchResultsAdapter(
@@ -23,7 +24,7 @@ class SearchResultsAdapter(
 ) : Adapter<SearchResult, SearchResultsAdapter.ViewHolder>(datasource),
         ItemClickHelper.Callback<SearchResult> {
 
-    var favorites: List<City> = emptyList()
+    var favorites: List<Favorite> = emptyList()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -44,7 +45,7 @@ class SearchResultsAdapter(
         holder.bindCurrentWeather(item, isFavorite, imageLoader)
     }
 
-    fun isFavorite(city: City) = favorites.find { it.id() == city.id() } != null
+    fun isFavorite(city: City) = favorites.find { it.city.id() == city.id() } != null
 
     @ContainerOptions(CacheImplementation.SPARSE_ARRAY)
     class ViewHolder(override val containerView: View?) : RecyclerView.ViewHolder(containerView),

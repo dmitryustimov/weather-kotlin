@@ -4,7 +4,7 @@ import android.support.annotation.Size
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.content.data.Favorite
 
 interface FavoritesView : MvpView {
 
@@ -12,7 +12,7 @@ interface FavoritesView : MvpView {
     fun showLoading()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showCities(@Size(min = 1) cities: List<City>)
+    fun showFavorites(@Size(min = 1) favorites: List<Favorite>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun showEmpty();

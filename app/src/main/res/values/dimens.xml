@@ -13,9 +13,9 @@
     <dimen name="action_bar_min_height">64dp</dimen>
     <dimen name="action_bar_elevation">4dp</dimen>
 
+    <dimen name="country_flag_width">20dp</dimen>
+    <dimen name="country_flag_height">15dp</dimen>
+
     <dimen name="list_item_search_result_offset_horizontal">0dp</dimen>
     <dimen name="list_item_search_result_offset_vertical">4dp</dimen>
-    <dimen name="list_item_search_result_country_flag_width">20dp</dimen>
-    <dimen name="list_item_search_result_country_flag_height">15dp</dimen>
-
 </resources>

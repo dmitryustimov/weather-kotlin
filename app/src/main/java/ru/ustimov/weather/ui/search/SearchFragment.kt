@@ -18,10 +18,11 @@ import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.fragment_search.*
 import ru.ustimov.weather.R
 import ru.ustimov.weather.appState
+import ru.ustimov.weather.content.ImageLoaderFactory
 import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.content.data.Favorite
 import ru.ustimov.weather.content.data.SearchResult
 import ru.ustimov.weather.content.data.Suggestion
-import ru.ustimov.weather.content.impl.GlideImageLoader
 import ru.ustimov.weather.rx.RxLifecycleFragment
 import ru.ustimov.weather.rx.RxSearchView
 import ru.ustimov.weather.ui.EmptyViewInfoFactory
@@ -73,7 +74,7 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
         suggestionsItemClickHelper.setOnItemClickListener({ _, item, _ -> onSuggestionClick(item) })
         suggestionsItemClickHelper.setRecyclerView(suggestionsRecyclerView)
 
-        val imageLoader = GlideImageLoader(this)
+        val imageLoader = ImageLoaderFactory.create(this)
         searchResultsDatasource = ListDatasource()
         searchResultsAdapter = SearchResultsAdapter(searchResultsDatasource, imageLoader)
         recyclerView.itemAnimator = DefaultItemAnimator()
@@ -115,8 +116,8 @@ class SearchFragment : RxLifecycleFragment(), SearchView {
                 .subscribe()
     }
 
-    override fun onFavoritesLoaded(cities: List<City>) {
-        searchResultsAdapter.favorites = cities
+    override fun onFavoritesLoaded(favorites: List<Favorite>) {
+        searchResultsAdapter.favorites = favorites
     }
 
     override fun showSuggestions(query: String, suggestions: List<Suggestion>) {

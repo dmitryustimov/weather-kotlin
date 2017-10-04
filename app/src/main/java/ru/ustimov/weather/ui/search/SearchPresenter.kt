@@ -7,6 +7,7 @@ import io.reactivex.functions.Function
 import io.reactivex.subjects.PublishSubject
 import ru.ustimov.weather.AppState
 import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.content.data.Favorite
 import ru.ustimov.weather.content.data.SearchResult
 import ru.ustimov.weather.content.data.Suggestion
 import ru.ustimov.weather.rx.RxMvpPresenter
@@ -43,8 +44,8 @@ class SearchPresenter(private val appState: AppState) : RxMvpPresenter<SearchVie
                 .subscribe(this::onFavoritesLoaded, {})
     }
 
-    private fun onFavoritesLoaded(cities: List<City>) {
-        viewState.onFavoritesLoaded(cities)
+    private fun onFavoritesLoaded(favorites: List<Favorite>) {
+        viewState.onFavoritesLoaded(favorites)
     }
 
     fun onQueryChanged(query: String, submit: Boolean) = querySubject.onNext(Query(query, submit))

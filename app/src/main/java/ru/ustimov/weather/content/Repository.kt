@@ -6,7 +6,7 @@ import ru.ustimov.weather.content.data.*
 
 interface Repository {
 
-    fun getFavorites(): Flowable<out List<City>>
+    fun getFavorites(): Flowable<List<Favorite>>
 
     fun addToFavorites(city: City): Single<out City>
 

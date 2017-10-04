@@ -4,14 +4,14 @@ import android.support.annotation.Size
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import ru.ustimov.weather.content.data.City
+import ru.ustimov.weather.content.data.Favorite
 import ru.ustimov.weather.content.data.SearchResult
 import ru.ustimov.weather.content.data.Suggestion
 
 interface SearchView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun onFavoritesLoaded(cities: List<City>)
+    fun onFavoritesLoaded(favorites: List<Favorite>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun showSuggestions(query: String, suggestions: List<Suggestion>)
