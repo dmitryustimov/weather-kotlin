@@ -8,11 +8,13 @@ import ru.ustimov.weather.content.data.Suggestion
 
 interface LocalDatasource {
 
-    fun getFavorites(): Flowable<out List<City>>
+    fun getCities(): Flowable<out List<City>>
 
-    fun addToFavorites(city: City): Single<out City>
+    fun addCity(city: City): Single<out City>
 
-    fun removeFromFavorites(city: City): Single<out City>
+    fun removeCity(city: City): Single<out City>
+
+    fun getCityById(cityId: Long): Flowable<out City>
 
     fun getSearchHistory(query: String, limit: Int): Flowable<out List<Suggestion>>
 

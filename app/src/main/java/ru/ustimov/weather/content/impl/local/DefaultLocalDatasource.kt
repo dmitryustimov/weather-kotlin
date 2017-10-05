@@ -51,14 +51,15 @@ class DefaultLocalDatasource(
                 .build()
     }
 
-    override fun getFavorites(): Flowable<out List<City>> =
+    override fun getCities(): Flowable<out List<City>> =
             database.cities().getAll()
+                    .distinctUntilChanged()
                     .doOnNext({ logger.d(TAG, "Loaded ${it.size} favorites") })
                     .doOnError({ it.println(logger) })
                     .onErrorResumeNext(Function { RoomExceptionFactory.flowable(it) })
                     .subscribeOn(schedulers.io())
 
-    override fun addToFavorites(city: City): Single<out City> =
+    override fun addCity(city: City): Single<out City> =
             city.toSingle().map({ RoomCity(it) })
                     .doOnSuccess({ database.cities().insert(it) })
                     .doOnSuccess({ logger.d(TAG, "$it has been saved to database") })
@@ -66,7 +67,7 @@ class DefaultLocalDatasource(
                     .onErrorResumeNext({ RoomExceptionFactory.single(it) })
                     .subscribeOn(schedulers.io())
 
-    override fun removeFromFavorites(city: City): Single<out City> =
+    override fun removeCity(city: City): Single<out City> =
             city.toSingle().map({ RoomCity(it) })
                     .doOnSuccess({ database.cities().delete(it) })
                     .doOnSuccess({ logger.d(TAG, "$it has been deleted from database") })
@@ -74,8 +75,17 @@ class DefaultLocalDatasource(
                     .onErrorResumeNext({ RoomExceptionFactory.single(it) })
                     .subscribeOn(schedulers.io())
 
+    override fun getCityById(cityId: Long): Flowable<out City> =
+            database.cities().get(cityId)
+                    .distinctUntilChanged()
+                    .doOnNext({ logger.d(TAG, "Loaded $it") })
+                    .doOnError({ it.println(logger) })
+                    .onErrorResumeNext(Function { RoomExceptionFactory.flowable(it) })
+                    .subscribeOn(schedulers.io())
+
     override fun getSearchHistory(query: String, limit: Int): Flowable<out List<Suggestion>> =
             database.searchHistory().getLatest(query, limit)
+                    .distinctUntilChanged()
                     .doOnNext({ logger.d(TAG, "Loaded ${it.size} search history entities") })
                     .doOnError({ it.println(logger) })
                     .onErrorResumeNext(Function { RoomExceptionFactory.flowable(it) })
@@ -92,6 +102,7 @@ class DefaultLocalDatasource(
 
     override fun getCountries(codes: List<String>): Flowable<out List<Country>> =
             database.countries().get(codes)
+                    .distinctUntilChanged()
                     .doOnNext({ logger.d(TAG, "Loaded ${it.size} countries") })
                     .doOnError({ it.println(logger) })
                     .onErrorResumeNext(Function { RoomExceptionFactory.flowable(it) })

@@ -47,6 +47,6 @@ class WeatherApplication : Application() {
 
 // Extensions
 
-fun Context.application() : WeatherApplication = applicationContext as WeatherApplication
+fun Context.application(): WeatherApplication = applicationContext as WeatherApplication
 
-fun Context.appState() : AppState = application().appState
+fun Context.appState(): AppState = application().appState

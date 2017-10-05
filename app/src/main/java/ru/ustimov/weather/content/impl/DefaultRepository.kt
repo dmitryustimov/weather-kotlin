@@ -23,7 +23,7 @@ class DefaultRepository(
     }
 
     override fun getFavorites(): Flowable<List<Favorite>> =
-            localDatasource.getFavorites()
+            localDatasource.getCities()
                     .observeOn(schedulers.computation())
                     .flatMap({ getObjectsAndCountries(it, { it.countryCode() }) })
                     .observeOn(schedulers.computation())
@@ -38,9 +38,11 @@ class DefaultRepository(
         }
     }
 
-    override fun addToFavorites(city: City): Single<out City> = localDatasource.addToFavorites(city)
+    override fun addToFavorites(city: City): Single<out City> = localDatasource.addCity(city)
 
-    override fun removeFromFavorites(city: City): Single<out City> = localDatasource.removeFromFavorites(city)
+    override fun removeFromFavorites(city: City): Single<out City> = localDatasource.removeCity(city)
+
+    override fun getCityById(cityId: Long): Flowable<out City> = localDatasource.getCityById(cityId)
 
     override fun getSearchSuggestions(query: String): Flowable<out List<Suggestion>> =
             if (query.length < MIN_QUERY_LENGTH) {

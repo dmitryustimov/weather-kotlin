@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import ru.ustimov.weather.content.data.Favorite
+import ru.ustimov.weather.ui.forecast.ForecastFragment
 
 class FavoritesViewPagerAdapter(fragmentManager: FragmentManager) :
         FragmentStatePagerAdapter(fragmentManager) {
@@ -21,12 +22,12 @@ class FavoritesViewPagerAdapter(fragmentManager: FragmentManager) :
 
     override fun getItem(position: Int): Fragment {
         val favorite = items[position]
-        return FavoriteFragment.create(favorite.city)
+        return ForecastFragment.create(favorite.city)
     }
 
     override fun getItemPosition(`object`: Any?): Int =
             when (`object`) {
-                is FavoriteFragment -> {
+                is ForecastFragment -> {
                     val index = items.indexOfFirst { it.city.id() == `object`.getCityId() }
                     if (index < 0) POSITION_NONE else index
                 }
@@ -35,7 +36,7 @@ class FavoritesViewPagerAdapter(fragmentManager: FragmentManager) :
 
     override fun getPageTitle(position: Int): CharSequence? {
         val favorite = items[position]
-        return favorite.city.name()
+        return "${favorite.city.name()}, ${favorite.city.countryCode()}"
     }
 
 }

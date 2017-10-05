@@ -77,6 +77,8 @@ dependencies {
     compile "android.arch.persistence.room:rxjava2:1.0.0-beta1"
     kapt "android.arch.persistence.room:compiler:1.0.0-beta1"
 
+    compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+
     testCompile 'junit:junit:4.12'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {

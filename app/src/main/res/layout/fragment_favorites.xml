@@ -10,14 +10,15 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?actionBarSize"
         android:gravity="bottom"
+        android:minHeight="?actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <ru.ustimov.weather.ui.OpenTabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:tabLayout="@layout/tab_favorite"
             app:tabMode="scrollable"/>
 
     </android.support.design.widget.AppBarLayout>

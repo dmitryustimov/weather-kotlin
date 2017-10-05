@@ -9,6 +9,7 @@ import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.ustimov.weather.R
 import ru.ustimov.weather.ui.favorites.FavoritesFragment
+import ru.ustimov.weather.ui.forecast.ForecastFragment
 import ru.ustimov.weather.ui.search.SearchFragment
 
 @ContainerOptions(CacheImplementation.SPARSE_ARRAY)
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity(), FavoritesFragment.Callbacks {
     private fun onBottomNavigationItemSelected(menuItem: MenuItem): Boolean =
             when (menuItem.itemId) {
                 R.id.action_my_location -> {
-                    showNotImplemented()
+                    showForecast()
                     true
                 }
                 R.id.action_favorites -> {
@@ -46,9 +47,9 @@ class MainActivity : AppCompatActivity(), FavoritesFragment.Callbacks {
                 else -> false
             }
 
-    private fun showNotImplemented() = supportFragmentManager.beginTransaction()
+    private fun showForecast() = supportFragmentManager.beginTransaction()
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .replace(R.id.content, NotImplementedFragment.create())
+            .replace(R.id.content, ForecastFragment.create())
             .commit()
 
     private fun showFavorites() = supportFragmentManager.beginTransaction()
@@ -59,6 +60,11 @@ class MainActivity : AppCompatActivity(), FavoritesFragment.Callbacks {
     private fun showSearch() = supportFragmentManager.beginTransaction()
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .replace(R.id.content, SearchFragment.create())
+            .commit()
+
+    private fun showNotImplemented() = supportFragmentManager.beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .replace(R.id.content, NotImplementedFragment.create())
             .commit()
 
     override fun onFindCityClick() {

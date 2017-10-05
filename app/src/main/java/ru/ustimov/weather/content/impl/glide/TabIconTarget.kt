@@ -3,6 +3,7 @@ package ru.ustimov.weather.content.impl.glide
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.support.design.widget.TabLayout
+import android.view.View
 import com.bumptech.glide.request.target.BaseTarget
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.transition.Transition
@@ -15,9 +16,7 @@ class TabIconTarget(
 
     private var animatable: Animatable? = null
 
-    override fun getView(): Nothing {
-        throw IllegalStateException("Please don't use view based animations")
-    }
+    override fun getView(): View? = tab.customView
 
     override fun getCurrentDrawable(): Drawable? = tab.icon
 

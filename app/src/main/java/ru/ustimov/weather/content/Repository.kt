@@ -12,6 +12,8 @@ interface Repository {
 
     fun removeFromFavorites(city: City): Single<out City>
 
+    fun getCityById(cityId: Long): Flowable<out City>
+
     fun getSearchSuggestions(query: String): Flowable<out List<Suggestion>>
 
     fun addToSearchHistory(query: String): Single<out Suggestion>
