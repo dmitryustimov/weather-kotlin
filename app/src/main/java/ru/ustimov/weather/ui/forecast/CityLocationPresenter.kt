@@ -1,5 +1,6 @@
 package ru.ustimov.weather.ui.forecast
 
+import android.location.Location
 import com.arellomobile.mvp.InjectViewState
 import io.reactivex.Flowable
 import ru.ustimov.weather.AppState
@@ -14,6 +15,10 @@ class CityLocationPresenter(appState: AppState, private val cityId: Long) : Loca
                 .doOnError({ viewState.onLocationNotFound() })
                 .onErrorResumeNext(Flowable.empty())
                 .subscribe({ viewState.onLocationFound(it) })
+    }
+
+    override fun onLocationChanged(location: Location) {
+        throw IllegalStateException("Presenter does not support location changes")
     }
 
 }

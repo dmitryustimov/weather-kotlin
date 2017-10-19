@@ -1,6 +1,8 @@
 package ru.ustimov.weather.ui.forecast
 
+import android.location.Location
 import com.arellomobile.mvp.InjectViewState
+import com.tbruyelle.rxpermissions2.Permission
 import io.reactivex.Flowable
 import ru.ustimov.weather.AppState
 import ru.ustimov.weather.content.data.City
@@ -16,5 +18,10 @@ abstract class LocationPresenter(protected val appState: AppState) : RxMvpPresen
             queryCityUsecase.run(QueryCityUsecase.Params(cityId))
                     .observeOn(appState.schedulers.mainThread())
                     .compose(bindUntilDestroy())
+
+    open fun onAccessCoarseLocationPermissionResult(permission: Permission) {
+    }
+
+    abstract fun onLocationChanged(location: Location)
 
 }

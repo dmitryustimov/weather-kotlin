@@ -15,7 +15,7 @@ interface FavoritesView : MvpView {
     fun showFavorites(@Size(min = 1) favorites: List<Favorite>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun showEmpty();
+    fun showEmpty()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun hideLoading()

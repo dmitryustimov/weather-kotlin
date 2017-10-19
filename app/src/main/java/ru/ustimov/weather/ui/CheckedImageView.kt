@@ -104,6 +104,7 @@ class CheckedImageView @JvmOverloads constructor(
 
         companion object {
 
+            @JvmStatic
             val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
 
                 override fun createFromParcel(src: Parcel) = SavedState(src)

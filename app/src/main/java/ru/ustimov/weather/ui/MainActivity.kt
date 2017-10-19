@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity(), FavoritesFragment.Callbacks {
         bottomNavigationBar.setOnNavigationItemReselectedListener({})
         if (savedInstanceState == null) {
             bottomNavigationBar.selectedItemId = R.id.action_my_location
+            showForecast()
         }
     }
 

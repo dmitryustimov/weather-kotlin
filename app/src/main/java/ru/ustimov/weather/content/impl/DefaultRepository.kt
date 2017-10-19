@@ -87,7 +87,7 @@ class DefaultRepository(
         } else {
             externalDatasource.getCountries(missingCountries)
                     .observeOn(schedulers.io())
-                    .doOnSuccess({ localDatasource.addCountries(it).blockingGet() })
+                    .flatMap({ localDatasource.addCountries(it) })
                     .map({ it.plus(localCountries) })
         }
     }
