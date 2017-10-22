@@ -45,52 +45,54 @@ class DefaultRepository(
     override fun getCityById(cityId: Long): Flowable<out City> = localDatasource.getCityById(cityId)
 
     override fun getSearchSuggestions(query: String): Flowable<out List<Suggestion>> =
-            if (query.length < MIN_QUERY_LENGTH) {
-                Flowable.just(emptyList())
-            } else {
-                localDatasource.getSearchHistory(query, MAX_SEARCH_HISTORY_SIZE)
-            }
+            Flowable.just(query)
+                    .filter({ it.length >= MIN_QUERY_LENGTH })
+                    .flatMap({ localDatasource.getSearchHistory(it, MAX_SEARCH_HISTORY_SIZE) })
+                    .switchIfEmpty(Flowable.just(emptyList()))
 
     override fun addToSearchHistory(query: String): Single<out Suggestion> =
             localDatasource.addToSearchHistory(query)
 
     override fun findCities(query: String): Flowable<List<SearchResult>> =
-            if (query.length < MIN_QUERY_LENGTH) {
-                Flowable.empty()
-            } else {
-                externalDatasource.findCities(query)
-                        .observeOn(schedulers.computation())
-                        .flatMapPublisher({ getObjectsAndCountries(it, { it.city().countryCode() }) })
-                        .observeOn(schedulers.computation())
-                        .map(this::createSearchResults)
-            }
+            Flowable.just(query)
+                    .filter({ it.length >= MIN_QUERY_LENGTH })
+                    .flatMapSingle({ externalDatasource.findCities(it) })
+                    .observeOn(schedulers.computation())
+                    .flatMap({ getObjectsAndCountries(it, { it.city().countryCode() }) })
+                    .map(this::createSearchResults)
+                    .switchIfEmpty(Flowable.just(emptyList()))
 
-    private fun <T> getObjectsAndCountries(objects: List<T>, countryCodeTransform: (T) -> String):
+    private fun <T> getObjectsAndCountries(objects: List<T>, countryCodeTransformer: (T) -> String):
             Flowable<Pair<List<T>, List<Country>>> {
         val objectsFlowable = Flowable.just(objects)
-        val distinctCountryCodes = objects.map(countryCodeTransform).distinct()
-        val countriesFlowable = getCountries(distinctCountryCodes)
+        val countriesFlowable = getCountries(objects, countryCodeTransformer)
         return Flowable.zip(objectsFlowable, countriesFlowable, BiFunction({ a, b -> Pair(a, b) }))
     }
 
-    private fun getCountries(codes: List<String>): Flowable<List<Country>> {
-        return localDatasource.getCountries(codes)
-                .observeOn(schedulers.computation())
-                .flatMapSingle({ getMissingCountries(codes, it) })
+    private fun <T> getCountries(objects: List<T>, countryCodeTransformer: (T) -> String): Flowable<List<Country>> =
+            Flowable.just(objects)
+                    .map({ it.map(countryCodeTransformer).distinct() }) // Extract country codes from objects
+                    .flatMap({ getCountries(it) })
+
+    private fun getCountries(codes: List<String>): Flowable<List<Country>> =
+            localDatasource.getCountries(codes)
+                    .flatMap({ combineCountries(codes, it) })
+
+    private fun combineCountries(codes: List<String>, localCountries: List<Country>): Flowable<List<Country>> {
+        val localCountriesFlowable = Flowable.just(localCountries)
+        val missingCountriesFlowable = getMissingCountries(codes, localCountries)
+        return Flowable.zip(localCountriesFlowable, missingCountriesFlowable,
+                BiFunction({ local, missing -> local.plus(missing) }))
     }
 
-    private fun getMissingCountries(codes: List<String>, localCountries: List<Country>): Single<List<Country>> {
-        val existingCountries = localCountries.map { it.code() }
-        val missingCountries = codes.minus(existingCountries)
-        return if (missingCountries.isEmpty()) {
-            Single.just(localCountries)
-        } else {
-            externalDatasource.getCountries(missingCountries)
-                    .observeOn(schedulers.io())
-                    .flatMap({ localDatasource.addCountries(it) })
-                    .map({ it.plus(localCountries) })
-        }
-    }
+    private fun getMissingCountries(codes: List<String>, localCountries: List<Country>): Flowable<List<Country>> =
+            Flowable.just(localCountries)
+                    .observeOn(schedulers.computation())
+                    .map({ codes.minus(it.map { it.code() }) }) // Return missing country codes
+                    .filter({ it.isNotEmpty() })
+                    .flatMapSingle({ externalDatasource.getCountries(it) }) // Request missing countries
+                    .flatMapSingle({ localDatasource.addCountries(it) }) // Save missing countries to the local storage
+                    .switchIfEmpty(Flowable.just(emptyList())) // Return empty list if no country is missing
 
     private fun createSearchResults(pair: Pair<List<CurrentWeather>, List<Country>>): List<SearchResult> {
         val countries = pair.second
