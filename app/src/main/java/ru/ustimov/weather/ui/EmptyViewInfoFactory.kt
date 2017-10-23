@@ -4,6 +4,7 @@ import android.content.Context
 import ru.ustimov.weather.R
 import ru.ustimov.weather.content.DatabaseException
 import ru.ustimov.weather.content.NetworkException
+import ru.ustimov.weather.content.NoConnectionException
 import ru.ustimov.weather.content.UnknownErrorException
 
 class EmptyViewInfoFactory private constructor() {
@@ -23,6 +24,7 @@ class EmptyViewInfoFactory private constructor() {
                             action = context.getText(R.string.action_try_again),
                             listener = actions.doOnDatabaseException)
 
+                    is NoConnectionException,
                     is NetworkException -> EmptyView.Info(
                             text = context.getText(R.string.message_network_exception),
                             action = context.getText(R.string.action_try_again),

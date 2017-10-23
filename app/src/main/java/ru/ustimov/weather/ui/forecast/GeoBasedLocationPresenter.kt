@@ -26,7 +26,7 @@ class GeoBasedLocationPresenter(appState: AppState) : LocationPresenter(appState
     }
 
     override fun onLocationChanged(location: Location) {
-
+        appState.logger.d("GeoBasedLocationPresenter", "Location=" + location)
     }
 
 }

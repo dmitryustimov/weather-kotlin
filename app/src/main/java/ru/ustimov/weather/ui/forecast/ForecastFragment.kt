@@ -1,6 +1,9 @@
 package ru.ustimov.weather.ui.forecast
 
 import android.Manifest
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -14,16 +17,22 @@ import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
+import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import ru.ustimov.weather.R
 import ru.ustimov.weather.appState
 import ru.ustimov.weather.content.data.City
 import ru.ustimov.weather.rx.RxIntent
+import ru.ustimov.weather.rx.RxLifecycleObserver
 import ru.ustimov.weather.util.println
+import java.util.concurrent.TimeUnit
 
-class ForecastFragment : MvpAppCompatFragment(), LocationView {
+class ForecastFragment : MvpAppCompatFragment(), LifecycleOwner, LocationView {
 
     companion object Factory {
 
@@ -31,6 +40,7 @@ class ForecastFragment : MvpAppCompatFragment(), LocationView {
         private const val UNKNOWN_CITY_ID = -1L
 
         private const val REQUEST_CODE_SETTINGS = 1000
+        private const val REQUEST_CODE_PLAY_SERVICES = 1001
 
         fun create(): ForecastFragment {
             val fragment = ForecastFragment()
@@ -52,6 +62,7 @@ class ForecastFragment : MvpAppCompatFragment(), LocationView {
     lateinit var locationPresenter: LocationPresenter
 
     private lateinit var rxPermissions: RxPermissions
+    private lateinit var locationLifecycleObserver: LocationLifecycleObserver
 
     @ProvidePresenter
     fun provideLocationPresenter(): LocationPresenter {
@@ -69,6 +80,7 @@ class ForecastFragment : MvpAppCompatFragment(), LocationView {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         rxPermissions = RxPermissions(activity)
+        locationLifecycleObserver = LocationLifecycleObserver()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -88,8 +100,7 @@ class ForecastFragment : MvpAppCompatFragment(), LocationView {
     }
 
     override fun onAccessCoarseLocationGranted() {
-        // TODO: request geolocation
-        Toast.makeText(context, "Access coarse location has been granted", Toast.LENGTH_SHORT).show()
+        lifecycle.addObserver(locationLifecycleObserver)
     }
 
     override fun showAccessCoarseLocationRationale() {
@@ -117,7 +128,7 @@ class ForecastFragment : MvpAppCompatFragment(), LocationView {
         val detailsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(data)
         val fallbackIntent = Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)
         RxIntent.resolveActivity(context, detailsIntent)
-                .onErrorResumeNext({ RxIntent.resolveActivity(context, fallbackIntent) })
+                .onErrorResumeNext(RxIntent.resolveActivity(context, fallbackIntent))
                 .subscribeBy(onSuccess = { startActivityForResult(it, REQUEST_CODE_SETTINGS) },
                         onError = { it.println(appState.logger) })
     }
@@ -134,6 +145,45 @@ class ForecastFragment : MvpAppCompatFragment(), LocationView {
 
     override fun onLocationNotFound() {
         Toast.makeText(context, "Location not found", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        lifecycle.removeObserver(locationLifecycleObserver)
+    }
+
+    inner class LocationLifecycleObserver : RxLifecycleObserver() {
+
+        private val locationProvider = ReactiveLocationProvider(context.applicationContext)
+        private val locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+                .setMaxWaitTime(TimeUnit.SECONDS.toMillis(10L))
+                .setInterval(TimeUnit.MINUTES.toMillis(1L))
+                .setSmallestDisplacement(1000F)
+
+        // http://stackoverflow.com/questions/29824408/google-play-services-locationservices-api-new-option-never0
+        private val locationSettingsRequest = LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest)
+                .setAlwaysShow(true)
+                .build()
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_START)
+        fun start() {
+            val appState = context.appState()
+            locationProvider
+                    .checkLocationSettings(locationSettingsRequest)
+                    .doOnNext({
+                        if (it.status.statusCode == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                            it.status.startResolutionForResult(activity, REQUEST_CODE_PLAY_SERVICES)
+                        }
+                    })
+                    .flatMap({ locationProvider.getUpdatedLocation(locationRequest) })
+                    .compose(bindUntilStop())
+                    .observeOn(appState.schedulers.mainThread())
+                    .subscribe({ locationPresenter.onLocationChanged(it) },
+                            { it.println(appState.logger) })
+        }
+
     }
 
 }
